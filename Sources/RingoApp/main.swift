@@ -1,1 +1,10 @@
-print("app")
+import AppKit
+
+// Menu-bar utility: no main window, no Dock icon unless enabled in Settings.
+MainActor.assumeIsolated {
+    let app = NSApplication.shared
+    let delegate = AppDelegate()
+    app.delegate = delegate
+    app.setActivationPolicy(.accessory)
+    app.run()
+}

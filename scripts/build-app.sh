@@ -1,0 +1,39 @@
+#!/bin/zsh
+# Builds Ringo.app (GUI + bundled `ringo` CLI) into ./build. Needs only the Xcode Command Line Tools.
+#   scripts/build-app.sh            release build
+#   scripts/build-app.sh debug      debug build
+set -euo pipefail
+cd "$(dirname "$0")/.."
+CONFIG="${1:-release}"
+VERSION="1.0.0"
+BUILD_NUMBER="$(git rev-list --count HEAD 2>/dev/null || echo 1)"
+APP="build/Ringo.app"
+
+echo "→ Compiling ($CONFIG)…"
+swift build -c "$CONFIG" --product RingoApp
+swift build -c "$CONFIG" --product ringo
+BIN="$(swift build -c "$CONFIG" --show-bin-path)"
+
+echo "→ Assembling $APP…"
+rm -rf "$APP"
+mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Helpers" "$APP/Contents/Resources"
+cp "$BIN/RingoApp" "$APP/Contents/MacOS/Ringo"
+cp "$BIN/ringo" "$APP/Contents/Helpers/ringo"
+sed -e "s/__VERSION__/$VERSION/" -e "s/__BUILD__/$BUILD_NUMBER/" Resources/Info.plist > "$APP/Contents/Info.plist"
+
+ICONSET="build/AppIcon.iconset"
+if [[ ! -f build/AppIcon.icns ]]; then
+  echo "→ Rendering icon…"
+  swift scripts/make-icon.swift "$ICONSET" >/dev/null
+  iconutil -c icns "$ICONSET" -o build/AppIcon.icns
+fi
+cp build/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
+
+echo "→ Signing (ad hoc, hardened runtime)…"
+codesign --force --options runtime --sign - "$APP/Contents/Helpers/ringo"
+codesign --force --options runtime --entitlements Resources/Ringo.entitlements --sign - "$APP"
+codesign --verify --strict "$APP"
+
+echo "✓ Built $APP"
+echo "  Run the app:  open $APP"
+echo "  Run the CLI:  $APP/Contents/Helpers/ringo --help"

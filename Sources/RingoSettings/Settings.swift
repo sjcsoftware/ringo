@@ -17,6 +17,7 @@ public struct RingoSettings: Codable, Equatable, Sendable {
     public init() {}
 
     public struct General: Codable, Equatable, Sendable {
+        public init() {}
         public var launchAtLogin = false
         public var showMenuBarIcon = true
         public var showDockIcon = false
@@ -48,6 +49,7 @@ public struct RingoSettings: Codable, Equatable, Sendable {
     }
 
     public struct Shortcuts: Codable, Equatable, Sendable {
+        public init() {}
         public var convert = Gesture(trigger: "doubleTap", modifier: "shift", fallbackKey: "r", fallbackModifiers: ["control", "shift"])
         public var tools = Gesture(trigger: "doubleTap", modifier: "command", fallbackKey: "r", fallbackModifiers: ["control", "command"])
         /// Maximum gap between the two taps, seconds.
@@ -60,6 +62,7 @@ public struct RingoSettings: Codable, Equatable, Sendable {
     }
 
     public struct Radial: Codable, Equatable, Sendable {
+        public init() {}
         /// Visual opacity of the glass body, 0.2…1.0. Labels keep their own contrast plates.
         public var opacity = 0.86
         /// `liquidGlass` (macOS 26+), `frosted`, `solid`.
@@ -87,6 +90,7 @@ public struct RingoSettings: Codable, Equatable, Sendable {
     }
 
     public struct Conversion: Codable, Equatable, Sendable {
+        public init() {}
         /// Provider priority. Providers not listed keep their built-in order after these.
         public var providerOrder: [String] = []
         public var defaultQuality = 85
@@ -106,6 +110,7 @@ public struct RingoSettings: Codable, Equatable, Sendable {
     }
 
     public struct Tools: Codable, Equatable, Sendable {
+        public init() {}
         public var compressPreset = "balanced"
         public var metadataStripScope = "all"
         public var resizePercent = 50.0
@@ -120,6 +125,7 @@ public struct RingoSettings: Codable, Equatable, Sendable {
     }
 
     public struct Advanced: Codable, Equatable, Sendable {
+        public init() {}
         public var cliInstallPath = "/usr/local/bin/ringo"
         /// `error`, `warning`, `info`, `debug`.
         public var logLevel = "warning"

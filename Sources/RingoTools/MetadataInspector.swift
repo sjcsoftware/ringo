@@ -113,6 +113,11 @@ public enum MetadataInspector {
                 let v = CGImageMetadataTagCopyValue(t)
                 let value: String = {
                     if let s = v as? String { return s }
+                    let type = CGImageMetadataTagGetType(t)
+                    if type == .alternateText || type == .alternateArray {
+                        // Language alternatives: ImageIO resolves x-default for us through the path API.
+                        return (CGImageMetadataCopyStringValueWithPath(meta, nil, "\(prefix):\(name)" as CFString) as String?) ?? ""
+                    }
                     if let a = v as? [CGImageMetadataTag] { return a.compactMap { CGImageMetadataTagCopyValue($0) as? String }.joined(separator: ", ") }
                     return v.map { "\($0)" } ?? ""
                 }()

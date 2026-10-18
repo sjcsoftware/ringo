@@ -406,14 +406,13 @@ enum ImageTools {
             switch key.lowercased() {
             case "title":
                 setXMP(meta, "dc:title", value, kind: .alternateText)
+            // ImageIO maps these TIFF properties onto dc:description / dc:creator / dc:rights itself; setting the
+            // XMP tag as well makes it mutate our (immutable) container and crash, so set only the property.
             case "description":
-                setXMP(meta, "dc:description", value, kind: .alternateText)
                 CGImageMetadataSetValueMatchingImageProperty(meta, kCGImagePropertyTIFFDictionary, kCGImagePropertyTIFFImageDescription, value as CFString)
             case "artist":
-                setXMP(meta, "dc:creator", value, kind: .arrayOrdered)
                 CGImageMetadataSetValueMatchingImageProperty(meta, kCGImagePropertyTIFFDictionary, kCGImagePropertyTIFFArtist, value as CFString)
             case "copyright":
-                setXMP(meta, "dc:rights", value, kind: .alternateText)
                 CGImageMetadataSetValueMatchingImageProperty(meta, kCGImagePropertyTIFFDictionary, kCGImagePropertyTIFFCopyright, value as CFString)
             case "keywords":
                 let words = value.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
@@ -435,19 +434,18 @@ enum ImageTools {
         return o
     }
 
+    /// Writes an XMP property in a form ImageIO can serialize: plain values through the path API,
+    /// arrays as a container of plain strings. (Containers of child tags read back fine in memory but
+    /// make CGImageMetadataCreateXMPData drop the whole packet.)
     static func setXMP(_ meta: CGMutableImageMetadata, _ path: String, _ value: Any, kind: CGImageMetadataType) {
-        let parts = path.split(separator: ":")
-        let uri = parts[0] == "dc" ? "http://purl.org/dc/elements/1.1/" : "http://ns.adobe.com/photoshop/1.0/"
-        let v: CFTypeRef
-        if let s = value as? String, kind == .arrayOrdered {
-            v = [s] as CFArray
-        } else if let a = value as? [String] {
-            v = a as CFArray
+        if let strings = value as? [String], kind != .string, kind != .alternateText {
+            let parts = path.split(separator: ":")
+            let uri = (parts[0] == "dc" ? "http://purl.org/dc/elements/1.1/" : "http://ns.adobe.com/photoshop/1.0/") as CFString
+            if let tag = CGImageMetadataTagCreate(uri, String(parts[0]) as CFString, String(parts[1]) as CFString, kind, strings as CFArray) {
+                CGImageMetadataSetTagWithPath(meta, nil, path as CFString, tag)
+            }
         } else {
-            v = value as! CFTypeRef
-        }
-        if let tag = CGImageMetadataTagCreate(uri as CFString, String(parts[0]) as CFString, String(parts[1]) as CFString, kind, v) {
-            CGImageMetadataSetTagWithPath(meta, nil, path as CFString, tag)
+            CGImageMetadataSetValueWithPath(meta, nil, path as CFString, ((value as? String) ?? "") as CFString)
         }
     }
 

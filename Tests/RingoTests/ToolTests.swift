@@ -68,7 +68,8 @@ struct ToolTests {
         expectSuccess(r[0])
         let report = try await MetadataInspector.inspect(try InputFile.resolve(r[0].outputs[0].path))
         #expect(report.fields.contains { $0.key == "dc:subject" && $0.value.contains("sea") })
-        #expect(report.fields.contains { $0.key == "Artist" && $0.value == "Me" })
+        #expect(report.fields.contains { $0.key == "dc:title" && $0.value == "Trip" })
+        #expect(report.fields.contains { $0.key == "dc:creator" && $0.value == "Me" })
         let bad = try await tool(fx, .metadataSet(["favoriteColor": "blue"]), [try fx.jpegWithGPS("b.jpg")])
         #expect(bad[0].status == .failed)
     }
