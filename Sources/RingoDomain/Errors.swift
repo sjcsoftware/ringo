@@ -1,6 +1,6 @@
 import Foundation
 
-/// Typed, stable errors. `code` strings and `exitCode` values are part of the CLI contract (CLI.md).
+/// Typed, stable errors. `code` strings and `exitCode` values are part of the CLI contract (docs/CLI.md).
 public enum RingoError: Error, Equatable, Sendable, CustomStringConvertible {
     case invalidArgument(String)
     case inputNotFound(String)

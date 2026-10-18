@@ -77,7 +77,7 @@ public struct FormatDescriptor: Codable, Hashable, Sendable {
     public let utis: [String]
     public let mimeType: String?
     public let role: FormatRole
-    /// Section of PROMPT.md §8 that lists this format, or "parity" for Filee/Tangerine candidates.
+    /// Catalog section for this format, or "parity" for additional conversion categories.
     public let catalogSection: String
     public let symbol: String
     public let notes: String?
@@ -99,7 +99,7 @@ public struct FormatDescriptor: Codable, Hashable, Sendable {
     }
 }
 
-/// The complete format catalog. Every item explicitly enumerated in PROMPT.md §8 appears here.
+/// The complete catalog of supported file formats.
 public enum FormatCatalog {
     public static let all: [FormatDescriptor] = [
         // §8.1 Images

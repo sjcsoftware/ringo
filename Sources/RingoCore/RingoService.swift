@@ -21,7 +21,7 @@ public struct PlanEntry: Codable, Sendable {
     public var warnings: [String]
 }
 
-/// The unified application service (PROMPT.md §6). AppKit-free; used by the CLI and the app.
+/// The unified application service. AppKit-free; used by the CLI and the app.
 public final class RingoService: @unchecked Sendable {
     public let registry: CapabilityRegistry
     public let toolProviders: [ToolProvider]

@@ -52,7 +52,7 @@ public enum Fidelity: String, Codable, Sendable, CaseIterable {
     }
 }
 
-/// Truthful implementation status, matching the vocabulary required by PROMPT.md §15.
+/// Implementation maturity exposed by the capability registry.
 public enum CapabilityStatus: String, Codable, Sendable {
     case implemented
     case providerDependent = "provider-dependent"

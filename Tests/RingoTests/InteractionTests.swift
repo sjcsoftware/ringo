@@ -1,9 +1,48 @@
+import AppKit
 import CoreGraphics
 import Foundation
 import Testing
 import RingoEngine
 @testable import RingoRadialUI
 @testable import RingoShortcuts
+
+@MainActor
+@Suite("Progress panel", .serialized)
+struct ProgressHUDTests {
+    @Test(arguments: [false, true], [1, 2])
+    func completionClosesSuccessfulJobsAndKeepsFailuresVisible(missingInput: Bool, fileCount: Int) async throws {
+        let fx = try Fixtures()
+        let center = JobCenter(service: fx.service())
+        let app = NSApplication.shared
+        let existingWindows = Set(app.windows.map(ObjectIdentifier.init))
+        let hud = ProgressHUD(center: center)
+        let panel = try #require(app.windows.first { !existingWindows.contains(ObjectIdentifier($0)) && $0 is NSPanel })
+        defer {
+            center.onStart = nil
+            center.onFinish = nil
+            hud.hide()
+            panel.close()
+        }
+
+        let inputs = try (0..<fileCount).map { index in
+            missingInput ? fx.url("missing-\(index).png") : try fx.png("image-\(index).png")
+        }
+        let job: JobCenter.Job = await withCheckedContinuation { continuation in
+            center.onStart = { _ in
+                hud.show(near: NSPoint(x: 400, y: 400))
+                #expect(panel.isVisible)
+            }
+            center.onFinish = { job in
+                hud.finished(job)
+                continuation.resume(returning: job)
+            }
+            center.run(.convert(target: "jpeg", files: inputs))
+        }
+        #expect(job.finished)
+        #expect(job.failures.isEmpty == !missingInput)
+        #expect(panel.isVisible == missingInput)
+    }
+}
 
 @Suite("Modifier double-tap recognizer")
 struct RecognizerTests {

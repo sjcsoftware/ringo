@@ -1,140 +1,141 @@
-# Ringo
-
-Ringo converts and edits files from a radial menu that opens next to your pointer in Finder. Select files, double-tap ⇧ Shift, pick a format, and the new file appears beside the original. Double-tap ⌘ Command instead for file tools: compress, metadata, edit, annotate, crop, redact and archive. A command-line tool with the same name, `ringo`, uses the same engine for scripts and agents.
-
-Everything runs on your Mac. Ringo never uploads files, never calls a server, and has no telemetry or account.
-
-<p>
-<img src="docs/images/convert-ring.png" width="260" alt="Convert ring for a PNG: WebP, AVIF, JPEG, HEIC, TIFF, PDF, BMP and GIF wedges around a hub showing the file thumbnail">
-<img src="docs/images/tools-ring.png" width="260" alt="File Tools ring with Compress, Edit Metadata, Edit, Annotate, Crop, Redact and Archive">
-<img src="docs/images/mixed-selection.png" width="260" alt="Mixed selection of audio, PDF and image files split into one submenu per category">
+<p align="center">
+  <img src="docs/images/icon.png" width="128" height="128" alt="Ringo icon">
 </p>
+
+<h1 align="center">Ringo</h1>
+
+<p align="center">
+  <img alt="macOS 14 or later" src="https://img.shields.io/badge/macOS-14%2B-black?logo=apple">
+  <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple%20Silicon-arm64-black">
+  <img alt="Swift 6" src="https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white">
+  <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-blue"></a>
+</p>
+
+<p align="center">
+  <b>Convert and edit files without leaving Finder.</b><br>
+  Select a file, double-tap Shift, and choose a format. Everything happens on your Mac.
+</p>
+
+<p align="center">
+  <a href="https://github.com/sjcsoftware/ringo/releases/latest"><b>Download for macOS</b></a>
+  · <a href="#features">Features</a>
+  · <a href="#getting-started">Getting started</a>
+  · <a href="docs/CLI.md">CLI reference</a>
+</p>
+
+<table>
+  <tr>
+    <td width="50%" align="center"><img src="docs/images/convert-ring.png" width="340" alt="Ringo's Convert ring with image formats around a file preview"></td>
+    <td width="50%" align="center"><img src="docs/images/tools-ring.png" width="340" alt="Ringo's File Tools ring with compress, edit, crop, redact and archive actions"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Double-tap <kbd>⇧ Shift</kbd> to convert.</sub></td>
+    <td align="center"><sub>Double-tap <kbd>⌘ Command</kbd> for file tools.</sub></td>
+  </tr>
+</table>
+
+## Features
+
+- **Convert where you work.** A radial menu opens beside your pointer with formats suited to the selected files. Mixed selections are grouped by category.
+- **Everyday file tools.** Compress, edit metadata, annotate, crop, redact, and create or extract archives.
+- **Keep your originals.** New files appear beside the source. Existing filenames are handled automatically, and successful jobs close the progress panel for you.
+- **Stay local.** No uploads, accounts, telemetry, or conversion servers. macOS frameworks do the work, with optional local tools for more formats.
+- **Use the keyboard or trackpad.** Click a wedge, scroll around the ring, type to search, or use number keys and Return.
+- **Automate the same engine.** The bundled `ringo` CLI supports batch jobs, folder watching, conversion plans, and JSON output.
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/images/markup-editor.png" alt="Image markup editor with drawing, shape, arrow and text tools"></td>
+    <td width="50%"><img src="docs/images/redact-text.png" alt="PDF text redaction panel with search terms and pattern options"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Annotate images and PDFs.</sub></td>
+    <td align="center"><sub>Redact text with local OCR verification.</sub></td>
+  </tr>
+</table>
 
 ## Install
 
-Ringo needs macOS 14 or later and builds with the Xcode Command Line Tools (Xcode itself is not required).
+Requires **macOS 14 Sonoma or later**. The downloadable build is for **Apple Silicon**.
 
-```bash
-git clone <this repository> ringo && cd ringo
-scripts/build-app.sh            # builds build/Ringo.app with the CLI inside it
-open build/Ringo.app            # first launch shows a short setup window
-```
+1. Download `Ringo-1.0.0-arm64.dmg` from [Releases](https://github.com/sjcsoftware/ringo/releases/latest).
+2. Open the DMG and drag **Ringo** into **Applications**.
+3. Launch Ringo and complete the short setup.
 
-To use the CLI outside the app bundle, open Settings → Advanced → Install, or link it yourself:
+The current release is ad hoc signed and is **not notarized**. macOS may require you to allow it in **System Settings → Privacy & Security → Open Anyway** after the first launch attempt.
 
-```bash
-ln -s "$PWD/build/Ringo.app/Contents/Helpers/ringo" /usr/local/bin/ringo
-```
+## Getting started
 
-Shell completions for zsh, bash and fish are written to `completions/` by the build script.
+1. Select one or more files in Finder.
+2. Double-tap <kbd>⇧ Shift</kbd> to convert, or <kbd>⌘ Command</kbd> for file tools.
+3. Choose an action. The output appears in the same folder as the original.
 
-### Optional tools
+| Shortcut | Action |
+| --- | --- |
+| Double-tap <kbd>⇧ Shift</kbd> | Open Convert |
+| Double-tap <kbd>⌘ Command</kbd> | Open File Tools |
+| <kbd>⌃⇧R</kbd> / <kbd>⌃⌘R</kbd> | Open Convert / File Tools without Accessibility permission |
+| <kbd>1</kbd>–<kbd>8</kbd>, then <kbd>Return</kbd> | Select and run a wedge |
+| Arrow keys or <kbd>Tab</kbd> | Navigate the menu |
+| Type a format | Search, including submenus |
+| <kbd>Esc</kbd> | Clear search, go back, or close |
 
-Ringo handles images, PDFs, documents, spreadsheets, subtitles, archives, fonts and Apple audio/video formats with macOS frameworks alone. Some formats need a tool you install yourself; Ringo finds it automatically and never downloads anything:
+**Permissions:** Finder Automation lets Ringo read your selection. Accessibility enables the double-tap shortcuts; the alternate keyboard shortcuts work without it. Pages and Keynote request Automation access only for conversions that use them.
 
-| Tool | Adds | Install |
-|---|---|---|
-| FFmpeg | MP3, OGG, Opus, WMA, FLAC; MKV, WebM, AVI, WMV; video GIFs; most audio/video tools | `brew install ffmpeg` |
+Settings and recent outputs are available from the menu bar icon. Successful jobs dismiss the progress panel automatically; errors remain visible so you can inspect them.
+
+## Formats and optional tools
+
+Ringo supports images, audio, video, PDFs, documents, spreadsheets, subtitles, and archives. Available conversions depend on the source format and installed providers. See the [format reference](docs/FORMATS.md) for supported routes and fidelity limits.
+
+| Optional tool | Adds | Install |
+| --- | --- | --- |
+| FFmpeg | More audio/video formats and media tools | `brew install ffmpeg` |
 | ImageMagick | WebP output | `brew install imagemagick` |
-| Pandoc | Higher-fidelity Markdown, DOCX, ODT and EPUB conversion | `brew install pandoc` |
-| LibreOffice | DOC/XLS/PPT input, PPTX → PDF and images, Office → PDF with Office-like layout | `brew install --cask libreoffice` |
-| Apple Pages / Keynote | Pages and Keynote files, PDF → Pages | Mac App Store |
-| librsvg, Ghostscript, Calibre, woff2, Assimp, LibreDWG | Vector SVG → PDF, stronger PDF compression, e-books, WOFF2, glTF/FBX, DWG | Homebrew |
+| Pandoc | Additional document conversions | `brew install pandoc` |
+| LibreOffice | Legacy Office input and Office-to-PDF conversion | `brew install --cask libreoffice` |
+| Apple Pages / Keynote | Pages and Keynote conversions | Mac App Store |
 
-`ringo providers doctor` lists what is installed and what each missing tool would unlock. On the development machine, 429 of 462 conversion routes were available with FFmpeg, ImageMagick, Pandoc and librsvg installed; see [FORMAT_MATRIX.md](FORMAT_MATRIX.md).
-
-## Using the radial menu
-
-1. Select one or more files in Finder (any folders, including the Desktop).
-2. Double-tap **⇧ Shift** for Convert or **⌘ Command** for File Tools. The key combinations **⌃⇧R** and **⌃⌘R** do the same and need no extra permission.
-3. Choose a wedge:
-   - click or tap it, or turn the trackpad with two fingers to move around the ring;
-   - press **1–8** to jump to a wedge and **Return** to run it;
-   - use **← →** (or Tab) to move, **↓** to open a submenu, **↑** to go back;
-   - type a format such as `webp` or `mp4` to search inside the ring.
-4. The menu stays open until you run something, click outside it, or press **Escape**. Escape first clears a search, then leaves a submenu, then closes.
-
-Outputs go into each file's own folder: `photo.png` → `photo.webp`, or `photo (converted).webp` when that name is taken. Tools add a label, such as `photo (compressed).jpg` or `contract (redacted).pdf`. Originals are never changed unless you ask for it explicitly on the command line (`--in-place`).
-
-Actions with options (trim times, crop rectangle, markup, text to redact, metadata fields) open a small panel next to where the menu was. Return applies; Escape cancels.
-
-<p>
-<img src="docs/images/markup-editor.png" width="360" alt="Markup panel with pen, shape, arrow and text tools over an image preview">
-<img src="docs/images/redact-text.png" width="300" alt="Redact Text panel with search terms and pattern toggles for emails and phone numbers">
-</p>
-
-### Permissions
-
-- **Finder automation** (needed): the first time, macOS asks whether Ringo may control Finder. Ringo only sends "get selection".
-- **Accessibility** (optional): needed for the double-tap triggers, because macOS shows other apps' modifier keys only to trusted apps. Ringo looks at key timing, never at what you type. Without it, use ⌃⇧R and ⌃⌘R.
-- **Automation for Pages or Keynote**: asked only if you choose a conversion that needs those apps.
+Run `ringo providers doctor` to see available providers and what additional tools would unlock. Ringo never downloads providers automatically.
 
 ## Command line
 
-The CLI works whether or not the app is running.
+Install the CLI from **Settings → Advanced → Install**, then use it from any terminal. The app does not need to be running.
 
 ```bash
-ringo photo.png webp                                  # shorthand for: ringo convert photo.png --to webp
-ringo convert '*.heic' --to jpeg --quality 90         # Ringo expands quoted globs
-ringo convert report.pdf --to png                     # every page at 300 DPI: report-p01.png, report-p02.png …
-ringo convert book.xlsx --to csv --sheet all          # one CSV per sheet
-ringo plan report.pdf --to docx                       # which provider, what survives, where the file goes
+ringo photo.png jpeg
+ringo convert '*.heic' --to jpeg --quality 90
+ringo plan report.pdf --to docx
 ringo compress clip.mov --preset small
-ringo metadata strip IMG_0042.jpg                     # pixels untouched, GPS and EXIF removed
+ringo metadata strip IMG_0042.jpg
 ringo redact contract.pdf --text "Jane Doe" --pattern email
-ringo edit pdf scan.pdf --delete 2,5-7
-ringo extract download.zip                            # into a new sibling folder, with traversal checks
-ringo watch ~/Scans --to pdf --move-originals         # convert files as they arrive
-ringo capabilities --from pdf --json                  # machine-readable capability discovery
+ringo watch ~/Scans --to pdf --move-originals
+ringo capabilities --from pdf --json
 ```
 
-Every command accepts `--json` and prints one document with schema `ringo/1`. `--events` streams progress as NDJSON on stderr. Exit codes are fixed: 0 success, 1 partial failure, 2 invalid arguments, 3 unsupported conversion, 4 missing provider, 5 input problem, 6 output problem, 7 cancelled or timed out, 8 verification failed, 9 provider failed, 10 internal error. [CLI.md](CLI.md) has the full reference and agent recipes.
+See the [CLI reference](docs/CLI.md) for commands, JSON output, exit codes, and automation examples. The [security notes](SECURITY.md) explain output handling, archive extraction, and redaction.
 
-## What converts to what
+## Build from source
 
-The short version, by category. [FORMAT_MATRIX.md](FORMAT_MATRIX.md) lists every directed edge, the provider that runs it, and what survives.
-
-| From | To | Notes |
-|---|---|---|
-| JPEG, PNG, WebP, HEIC, TIFF, AVIF, BMP, GIF | each other, PDF | WebP output needs ImageMagick. Transparency, orientation and color profiles are handled; animations keep frames only into GIF. |
-| SVG | PNG, JPEG, HEIC, TIFF, AVIF, BMP, GIF, PDF, WebP | Input only. Ringo does not trace bitmaps into vectors. |
-| MP3, M4A, WAV, FLAC, OGG, Opus, AIFF, WMA | each other | M4A, WAV and AIFF work natively; the rest need FFmpeg. |
-| MP4, MOV, MKV, WebM, AVI, WMV | each other, GIF, MP3 and other audio | Streams are copied when the container allows it. MP3 export fails clearly when there is no audio track. |
-| PDF | PNG, JPEG (all pages, 300 DPI), TXT, Markdown, DOCX, EPUB, HTML, PPTX, XLSX, Pages | PDF → Office formats reconstruct text only; PPTX slides are page images; XLSX is experimental; Pages needs Apple Pages. |
-| DOCX, Pages, Markdown, TXT, EPUB, RTF, RTFD, text clippings, HTML | DOCX, Markdown, TXT, EPUB, HTML, PDF, ODT, Pages | RTF, RTFD and clippings are input only; HTML is an export target that is also accepted as input. |
-| PPTX, PPT | PDF, PNG, JPEG | Needs LibreOffice or Keynote. PPT is input only. |
-| XLSX, ODS, CSV, TSV, XLS | each other, PDF | XLS is input only (LibreOffice). Formulas export as values. |
-| SRT, VTT | each other, TXT | |
-| ZIP, TAR, TAR.GZ, RAR | a folder, each other | RAR is input only. ZIP, TAR, TAR.GZ and GZIP creation is a tool. |
-| Extras | OBJ/STL/PLY/USD, TTF/OTF ↔ WOFF/WOFF2, HWP/HWPX → text formats | From the Filee benchmark; some are experimental. |
-
-## Privacy and safety
-
-- No network access for any conversion or tool. A test runs the CLI inside a sandbox that denies the network ([TESTING.md](TESTING.md)).
-- Outputs are written to a temporary file, synced, then renamed into place in one step, so a crash never leaves a half-written file under the final name and an existing file is never overwritten by accident.
-- Redaction flattens pages to images, removes the text layer, fonts, links, forms and metadata, and re-checks the result with text extraction and OCR before saving.
-- Archive extraction refuses absolute paths and `..` entries, removes links that point outside the new folder, and stops at a size limit.
-
-[SECURITY.md](SECURITY.md) covers the threat model in detail.
-
-## Documentation
-
-| File | Contents |
-|---|---|
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Modules, process model, provider protocol, data flow |
-| [DESIGN.md](DESIGN.md) | Radial geometry, glass, opacity, motion, keyboard and trackpad behavior, accessibility |
-| [CLI.md](CLI.md) | Commands, JSON schema, exit codes, agent workflows |
-| [FORMAT_MATRIX.md](FORMAT_MATRIX.md) | Every format and directed edge, generated from the registry |
-| [PARITY_MATRIX.md](PARITY_MATRIX.md) | Tangerine and Filee features with sources and Ringo's status |
-| [SECURITY.md](SECURITY.md) | Local-only policy, subprocesses, archives, redaction |
-| [DECISIONS.md](DECISIONS.md) | Architecture decisions, constraints and deferred work |
-| [TESTING.md](TESTING.md) | Test suite, acceptance checklist, measurements |
-
-## Building and testing
+Install the Xcode Command Line Tools with a **Swift 6** toolchain, then:
 
 ```bash
-scripts/build-app.sh          # release build of Ringo.app and ringo
-scripts/test.sh               # 120 Swift Testing tests
-scripts/offline-test.sh       # conversions with the network denied
-python3 scripts/gen-format-matrix.py build/Ringo.app/Contents/Helpers/ringo
+git clone https://github.com/sjcsoftware/ringo.git
+cd ringo
+scripts/build-app.sh           # dist/Ringo.app, including the CLI
+open dist/Ringo.app
 ```
+
+To create a DMG or run the checks:
+
+```bash
+scripts/package-dmg.sh         # dist/Ringo-<version>-<arch>.dmg + SHA-256 checksum
+scripts/test.sh
+scripts/offline-test.sh        # conversions with network access denied
+```
+
+The build uses Swift Package Manager and ad hoc signing; a full Xcode installation is optional. Third-party license notices are included in the app bundle.
+
+## License
+
+Copyright © 2026 chaseungjoon. Released under the [MIT License](LICENSE).

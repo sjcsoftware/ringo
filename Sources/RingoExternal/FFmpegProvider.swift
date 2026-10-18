@@ -3,7 +3,7 @@ import RingoCore
 import RingoDomain
 
 /// Audio/video breadth through a locally installed FFmpeg. Never bundled (GPL/LGPL and patent
-/// implications are left to the user's build; see SECURITY.md and DECISIONS.md ADR-007).
+/// implications are left to the user's build; see SECURITY.md).
 public final class FFmpegProvider: ConversionProvider, @unchecked Sendable {
     public let id: ProviderID = "ffmpeg"
     public let name = "FFmpeg"

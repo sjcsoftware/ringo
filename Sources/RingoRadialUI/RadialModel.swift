@@ -20,7 +20,7 @@ public enum RadialKey: Equatable {
 
 /// The radial menu's state machine: levels, pages, focus and in-ring search.
 ///
-/// Key map (DESIGN.md §Keyboard): 1–8 focus a wedge; ←/→ and Tab/⇧Tab rotate; ↓ or Enter opens a
+/// Key map: 1–8 focus a wedge; ←/→ and Tab/⇧Tab rotate; ↓ or Enter opens a
 /// submenu; Enter runs the focused action; ↑ goes back a level; typing searches inside the ring;
 /// Backspace edits the query (or goes back when it is empty); Escape clears the query, then backs out,
 /// then closes. Nothing runs and nothing closes without Enter, a click, an outside click or Escape.

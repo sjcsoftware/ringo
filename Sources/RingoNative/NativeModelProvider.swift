@@ -3,7 +3,7 @@ import ModelIO
 import RingoCore
 import RingoDomain
 
-/// 3D model conversion through Model I/O (Filee parity candidate, PROMPT.md §8.10).
+/// 3D model conversion through Model I/O.
 public final class NativeModelProvider: ConversionProvider, @unchecked Sendable {
     public let id: ProviderID = "native.model"
     public let name = "Model I/O (macOS)"

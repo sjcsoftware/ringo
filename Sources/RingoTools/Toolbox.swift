@@ -4,7 +4,7 @@ import RingoDomain
 import RingoExternal
 import RingoNative
 
-/// The File Tools implementation (PROMPT.md §4.2, §9). One provider, dispatching by operation and type.
+/// The File Tools implementation. One provider, dispatching by operation and type.
 public final class Toolbox: ToolProvider, @unchecked Sendable {
     public init() {}
 

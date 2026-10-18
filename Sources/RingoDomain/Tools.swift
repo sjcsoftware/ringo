@@ -1,6 +1,6 @@
 import Foundation
 
-/// Top-level File Tools wheel entries. The first six mirror the Tangerine benchmark in PROMPT.md §4.2.
+/// Top-level File Tools wheel entries.
 public enum ToolKind: String, Codable, CaseIterable, Sendable {
     case compress, metadata, edit, annotate, crop, redact, archive
 

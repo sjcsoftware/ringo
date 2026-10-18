@@ -59,7 +59,7 @@ final class SettingsNavigation: ObservableObject {
     }
 }
 
-/// The only conventional window besides onboarding (PROMPT.md §11). Created with
+/// The settings window, alongside onboarding. Created with
 /// `.fullSizeContentView` so macOS 26+ draws Liquid Glass window chrome.
 @MainActor
 final class SettingsWindowController: NSWindowController, NSWindowDelegate {

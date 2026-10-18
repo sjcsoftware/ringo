@@ -102,7 +102,6 @@ public final class ProgressHUD {
     private let panel: NSPanel
     private let hosting: NSHostingView<HUDView>
     private let center: JobCenter
-    private var hideTimer: Timer?
     private let viewState = HUDState()
 
     public init(center: JobCenter) {
@@ -122,7 +121,6 @@ public final class ProgressHUD {
 
     /// Show near the point where the radial was (below it), clamped to the screen.
     public func show(near point: NSPoint) {
-        hideTimer?.invalidate()
         viewState.expanded = false
         let size = hosting.fittingSize
         let w = max(size.width, 300), h = max(size.height, 64)
@@ -136,12 +134,12 @@ public final class ProgressHUD {
     }
 
     public func finished(_ job: JobCenter.Job) {
-        resizeToFit()
-        let hasProblems = !job.failures.isEmpty
         NSAccessibility.post(element: panel as Any, notification: .announcementRequested,
                              userInfo: [.announcement: job.headline, .priority: NSAccessibilityPriorityLevel.high.rawValue])
-        if !hasProblems {
-            hideTimer = Timer.scheduledTimer(withTimeInterval: 4, repeats: false) { [weak self] _ in MainActor.assumeIsolated { self?.hide() } }
+        if job.failures.isEmpty {
+            hide()
+        } else {
+            resizeToFit()
         }
     }
 
@@ -155,7 +153,6 @@ public final class ProgressHUD {
     }
 
     public func hide() {
-        hideTimer?.invalidate()
         panel.orderOut(nil)
     }
 

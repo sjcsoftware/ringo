@@ -56,7 +56,7 @@ public struct RingoSettings: Codable, Equatable, Sendable {
         public var doubleTapInterval = 0.32
         /// Longest a single tap may be held, seconds. Longer presses are ordinary modifier use.
         public var maxTapHold = 0.22
-        /// Experimental and off by default (see DECISIONS.md ADR-004).
+        /// Experimental and off by default.
         public var dragInvocation = false
         public var experimentalForceClick = false
     }

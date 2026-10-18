@@ -3,7 +3,7 @@ import RingoCore
 import RingoDomain
 
 /// Writes a minimal, standards-conformant PPTX where each slide is one full-bleed picture.
-/// Used for PDF → PPTX "pages as images" (nothing becomes editable; see FORMAT_MATRIX.md).
+/// Used for PDF → PPTX "pages as images" (nothing becomes editable; see docs/FORMATS.md).
 public enum PPTXWriter {
     /// - Parameters:
     ///   - slides: JPEG data per slide.

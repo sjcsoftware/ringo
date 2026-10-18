@@ -40,7 +40,7 @@ public struct RadialView: View {
     var onActivate: (Int) -> Void
 
     @Environment(\.accessibilityReduceMotion) private var systemReduceMotion
-    // Explicit State storage: the @State macro plugin is not part of the Command Line Tools (DECISIONS.md ADR-011).
+    // Explicit State storage: the @State macro plugin is not part of the Command Line Tools.
     private let appearedState = State(initialValue: false)
     private var appeared: Bool {
         get { appearedState.wrappedValue }

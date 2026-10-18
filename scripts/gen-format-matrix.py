@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Generates FORMAT_MATRIX.md from the live capability registry (`ringo capabilities --all --json`).
+"""Generates docs/FORMATS.md from the live capability registry (`ringo capabilities --all --json`).
 
-Run after changing providers:  python3 scripts/gen-format-matrix.py build/Ringo.app/Contents/Helpers/ringo
+Run after changing providers:  python3 scripts/gen-format-matrix.py dist/Ringo.app/Contents/Helpers/ringo
 The "Here" column reflects the machine that generated the file; the "Tested" column lists edges the
 automated suite exercises (keep TESTED in sync with Tests/RingoTests)."""
 import json, subprocess, sys, datetime, collections
@@ -45,7 +45,7 @@ w(f"Generated {datetime.date.today().isoformat()} from the capability registry (
 w(f"**{len(fmt)} formats, {total_edges} directed edges, {len(caps)} provider routes.** "
   f"On the machine that generated this file, {available} edges could run; the rest need an optional provider listed in the row.\n")
 w("Reading the table: one row per directed edge (source → target). *Provider* is the route Ringo uses first; *Others* are fallbacks. "
-  "*Fidelity* says what survives (see the legend). *Status* uses the vocabulary from PROMPT.md §15. *Here* is ✓ when the edge could run "
+  "*Fidelity* says what survives (see the legend). *Status* indicates support maturity. *Here* is ✓ when the edge could run "
   "on the generating machine. *Tested* is ✓ when the automated suite converts real fixtures along that edge.\n")
 w("A format being readable and another being writable does **not** mean every pair converts. Only the rows below exist.\n")
 w("## Legend\n")
@@ -79,15 +79,15 @@ def table(src_ids):
 
 for sec, title, cat in sections:
     ids = [f["id"] for f in formats if f["category"] == cat or (sec == "8.3" and f["id"] == "gif")]
-    w(f"## §{sec} {title}\n")
+    w(f"## {title}\n")
     w("| Format | Extensions | Role | Readable | Writable | Notes |\n|---|---|---|---|---|---|")
     for i in ids:
         f = fmt[i]
         w(f"| {f['name']} (`{i}`) | {', '.join('.' + e for e in f['extensions'] if e)} | {f['role']} | {'✓' if f['readable'] else '—'} | {'✓' if f['writable'] else '—'} | {f.get('notes') or ''} |")
     w("")
     w(table(set(ids) - ({"gif"} if sec == "8.1" else set())) and "\n".join(table(set(i for i in ids if not (sec == '8.3' and i == 'gif')))))
-w("## §8.10 Parity candidates\n")
-w("These come from the Filee/Tangerine benchmark (see PARITY_MATRIX.md). They are not part of the required catalog; their status is listed honestly.\n")
+w("## Additional formats\n")
+w("Additional 3D, font, Hangul, and CAD routes. Some require optional providers or are experimental.\n")
 for title, cat in parity:
     ids = [f["id"] for f in formats if f["category"] == cat]
     w(f"### {title}\n")
@@ -98,5 +98,5 @@ w("Archive *creation* (ZIP, TAR, TAR.GZ, GZIP) is a file tool, not a conversion 
 w("## Two-step routes\n")
 w("Rows whose provider is *Two-step route* run through an intermediate format. They are declared explicitly in "
   "`Sources/RingoEngine/RingoEngine.swift`, and their fidelity is the weaker of the two steps.\n")
-open("FORMAT_MATRIX.md", "w").write("\n".join(out) + "\n")
-print(f"wrote FORMAT_MATRIX.md: {len(fmt)} formats, {total_edges} edges, {available} available here")
+open("docs/FORMATS.md", "w").write("\n".join(out) + "\n")
+print(f"wrote docs/FORMATS.md: {len(fmt)} formats, {total_edges} edges, {available} available here")

@@ -4,7 +4,7 @@ Generated 2026-10-18 from the capability registry (`ringo capabilities --all --j
 
 **72 formats, 462 directed edges, 620 provider routes.** On the machine that generated this file, 429 edges could run; the rest need an optional provider listed in the row.
 
-Reading the table: one row per directed edge (source → target). *Provider* is the route Ringo uses first; *Others* are fallbacks. *Fidelity* says what survives (see the legend). *Status* uses the vocabulary from PROMPT.md §15. *Here* is ✓ when the edge could run on the generating machine. *Tested* is ✓ when the automated suite converts real fixtures along that edge.
+Reading the table: one row per directed edge (source → target). *Provider* is the route Ringo uses first; *Others* are fallbacks. *Fidelity* says what survives (see the legend). *Status* indicates support maturity. *Here* is ✓ when the edge could run on the generating machine. *Tested* is ✓ when the automated suite converts real fixtures along that edge.
 
 A format being readable and another being writable does **not** mean every pair converts. Only the rows below exist.
 
@@ -22,7 +22,7 @@ A format being readable and another being writable does **not** mean every pair 
 | `image-only` | Each page/slide becomes a picture; nothing is editable. |
 | `packaging` | Archive packaging; bytes unchanged. |
 
-## §8.1 Images
+## Images
 
 | Format | Extensions | Role | Readable | Writable | Notes |
 |---|---|---|---|---|---|
@@ -125,7 +125,7 @@ A format being readable and another being writable does **not** mean every pair 
 | webp → **png** | ImageIO (macOS) | ImageMagick | `lossless` | implemented | ✓ |  | Animated sources keep only the first frame unless converted to GIF. |
 | webp → **tiff** | ImageIO (macOS) | ImageMagick | `lossless` | implemented | ✓ |  | Animated sources keep only the first frame unless converted to GIF. |
 
-## §8.2 Audio
+## Audio
 
 | Format | Extensions | Role | Readable | Writable | Notes |
 |---|---|---|---|---|---|
@@ -197,7 +197,7 @@ A format being readable and another being writable does **not** mean every pair 
 | wma → **opus** | FFmpeg |  | `lossy` | provider-dependent | ✓ |  | Opus codec in an Ogg container, 128 kbps by default; resampled to 48 kHz. |
 | wma → **wav** | FFmpeg |  | `lossless` | provider-dependent | ✓ |  | Lossless container; quality cannot exceed the source. |
 
-## §8.3 Video
+## Video
 
 | Format | Extensions | Role | Readable | Writable | Notes |
 |---|---|---|---|---|---|
@@ -296,7 +296,7 @@ A format being readable and another being writable does **not** mean every pair 
 | wmv → **webm** | FFmpeg |  | `remux` | provider-dependent | ✓ |  | Streams are copied when the codecs fit WEBM; otherwise video is re-encoded (VP9 + Opus).; Subtitle and attachment streams are kept only for MKV targets. |
 | wmv → **wma** | FFmpeg |  | `lossy` | provider-dependent | ✓ |  | Extracts the first audio track. Fails clearly when the video has no audio.; Windows Media Audio 2 (wmav2), 192 kbps. |
 
-## §8.4 PDF
+## PDF
 
 | Format | Extensions | Role | Readable | Writable | Notes |
 |---|---|---|---|---|---|
@@ -317,7 +317,7 @@ A format being readable and another being writable does **not** mean every pair 
 | pdf → **txt** | PDFKit (macOS) |  | `text-only` | implemented | ✓ | ✓ | Text layer only. Scanned pages need --ocr (local Vision OCR); without a text layer and without OCR the result is empty. |
 | pdf → **xlsx** | PDFKit (macOS) |  | `heuristic` | experimental | ✓ | ✓ | Experimental: cells are guessed from text positions, one sheet per page. Merged cells, formulas and formatting are not recovered; review the result. |
 
-## §8.5 Documents
+## Documents
 
 | Format | Extensions | Role | Readable | Writable | Notes |
 |---|---|---|---|---|---|
@@ -408,7 +408,7 @@ A format being readable and another being writable does **not** mean every pair 
 | txt → **odt** | macOS text system | Pandoc | `approximate` | implemented | ✓ |  | Converted through the macOS text system: styles, lists and basic tables survive; complex Word features may not. |
 | txt → **pdf** | macOS text system |  | `approximate` | implemented | ✓ |  | Paginated by the macOS text system. Word-specific layout (headers, footers, columns, floating images) is not reproduced. |
 
-## §8.6 Slides
+## Slides
 
 | Format | Extensions | Role | Readable | Writable | Notes |
 |---|---|---|---|---|---|
@@ -430,7 +430,7 @@ A format being readable and another being writable does **not** mean every pair 
 | pptx → **pdf** | Apple Pages & Keynote | LibreOffice | `approximate` | provider-dependent | ✗ |  | Requires Apple Keynote (free on the Mac App Store). |
 | pptx → **png** | Two-step route |  | `image-only` | provider-dependent | ✗ |  | Requires LibreOffice. Install it with `brew install --cask libreoffice` (about 1 GB). |
 
-## §8.7 Spreadsheets
+## Spreadsheets
 
 | Format | Extensions | Role | Readable | Writable | Notes |
 |---|---|---|---|---|---|
@@ -464,7 +464,7 @@ A format being readable and another being writable does **not** mean every pair 
 | xlsx → **pdf** | Ringo spreadsheet engine | LibreOffice | `approximate` | implemented | ✓ |  | Rendered by Ringo as a values-only grid on landscape A4 pages, every sheet, wide sheets split across pages. Excel print areas, styles and charts are not reproduced; LibreOffice gives higher fidelity when installed. |
 | xlsx → **tsv** | Ringo spreadsheet engine |  | `approximate` | implemented | ✓ | ✓ | Writes the first sheet by default; --sheet <name\|number> picks one, --sheet all writes one file per sheet.; Formulas are exported as their last calculated values; formatting is dropped. |
 
-## §8.8 Subtitles
+## Subtitles
 
 | Format | Extensions | Role | Readable | Writable | Notes |
 |---|---|---|---|---|---|
@@ -478,7 +478,7 @@ A format being readable and another being writable does **not** mean every pair 
 | vtt → **srt** | Ringo subtitle engine |  | `approximate` | implemented | ✓ | ✓ | VTT cue settings (position, alignment), regions, STYLE and NOTE blocks have no SRT equivalent and are dropped. |
 | vtt → **txt** | Ringo subtitle engine |  | `text-only` | implemented | ✓ |  | Timing is dropped unless --keep-timestamps is used. |
 
-## §8.9 Archives
+## Archives
 
 | Format | Extensions | Role | Readable | Writable | Notes |
 |---|---|---|---|---|---|
@@ -505,9 +505,9 @@ A format being readable and another being writable does **not** mean every pair 
 | zip → **tar** | libarchive (macOS bsdtar) |  | `packaging` | implemented | ✓ |  | Repacked through a safe extraction; file contents are unchanged. macOS extended attributes are not stored. |
 | zip → **tgz** | libarchive (macOS bsdtar) |  | `packaging` | implemented | ✓ | ✓ | Repacked through a safe extraction; file contents are unchanged. macOS extended attributes are not stored. |
 
-## §8.10 Parity candidates
+## Additional formats
 
-These come from the Filee/Tangerine benchmark (see PARITY_MATRIX.md). They are not part of the required catalog; their status is listed honestly.
+Additional 3D, font, Hangul, and CAD routes. Some require optional providers or are experimental.
 
 ### 3D models
 

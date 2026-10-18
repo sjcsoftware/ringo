@@ -10,7 +10,7 @@ import RingoNative
 public enum RingoEngine {
     public static let version = "1.0.0"
 
-    /// Explicit two-step routes. Every chain is listed in FORMAT_MATRIX.md.
+    /// Explicit two-step routes. Every chain is listed in docs/FORMATS.md.
     public static let chains: [ChainProvider.Chain] = [
         .init("pptx", via: "pdf", "png", .imageOnly, limitations: ["One PNG per slide (-p01, -p02 …) at 300 DPI."]),
         .init("pptx", via: "pdf", "jpeg", .imageOnly, limitations: ["One JPEG per slide (-p01, -p02 …) at 300 DPI."]),

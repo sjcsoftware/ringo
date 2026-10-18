@@ -1,9 +1,13 @@
 #!/bin/zsh
-# Runs the test suite. With only the Command Line Tools installed, a test build that follows a plain
-# product build sometimes fails with "plugin for module 'TestingMacros' not found"; an immediate
-# second build succeeds, so build once more on failure, then run without rebuilding.
+# Runs the test suite with Xcode or the standalone Command Line Tools.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-swift build --build-tests "$@" >/dev/null 2>&1 || swift build --build-tests "$@"
+# Some Command Line Tools releases omit TestingMacros from Swift Build's plugin search path.
+TEST_SWIFT_FLAGS=()
+TESTING_PLUGIN="$(dirname "$(xcrun --find swiftc)")/../lib/swift/host/plugins/testing/libTestingMacros.dylib"
+if [[ -f "$TESTING_PLUGIN" ]]; then
+  TEST_SWIFT_FLAGS=(-Xswiftc -load-plugin-library -Xswiftc "$TESTING_PLUGIN")
+fi
+swift build --build-tests "${TEST_SWIFT_FLAGS[@]}" "$@"
 # NSLog chatter from system text frameworks is filtered; test output is untouched.
-swift test --skip-build "$@" 2>&1 | grep -vE "CoreText note|attributedStringScaled"
+swift test --skip-build "${TEST_SWIFT_FLAGS[@]}" "$@" 2>&1 | grep -vE "CoreText note|attributedStringScaled"
