@@ -83,6 +83,10 @@ public enum ArchiveEngine {
             try await group.next()
             group.cancelAll()
         }
+        // The watchdog polls; a fast extraction can finish between polls, so check once more.
+        if UInt64(InputFile.resolveSize(dir)) > limits.maxBytes {
+            throw RingoError.unsafeArchive("extracted data exceeds \(limits.maxBytes / 1_000_000) MB (possible decompression bomb)")
+        }
         progress(0.9)
         return sanitize(dir)
     }

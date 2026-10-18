@@ -166,48 +166,42 @@ public enum PDFText {
 
     // MARK: Tables (heuristic)
 
-    /// Rebuilds rows/cells from glyph positions: one row per text line, a new cell where the horizontal
-    /// gap between glyphs exceeds 1.5× the median glyph width. Heuristic by nature.
+    /// Rebuilds rows/cells: one row per text line (PDFKit's line grouping), and a new cell wherever the
+    /// horizontal gap between neighbouring glyphs exceeds about one em (a word space is about a quarter em).
+    /// Heuristic by nature.
     public static func tableRows(_ page: PDFPage) -> [[String]] {
-        guard let s = page.string, !s.isEmpty else { return [] }
-        let ns = s as NSString
-        struct Glyph { var c: String; var r: CGRect }
-        var glyphs: [Glyph] = []
-        glyphs.reserveCapacity(ns.length)
-        for i in 0..<ns.length {
-            let c = ns.substring(with: NSRange(location: i, length: 1))
-            if c == "\n" || c == "\r" { continue }
-            let r = page.characterBounds(at: i)
-            if r.isEmpty && c != " " { continue }
-            glyphs.append(Glyph(c: c, r: r))
-        }
-        let widths = glyphs.filter { $0.c != " " && $0.r.width > 0 }.map(\.r.width).sorted()
-        let median = widths.isEmpty ? 5 : widths[widths.count / 2]
-        // Group into lines by vertical center.
-        var lines: [[Glyph]] = []
-        for g in glyphs.sorted(by: { $0.r.midY > $1.r.midY }) {
-            if let last = lines.last?.first, abs(last.r.midY - g.r.midY) < max(2, last.r.height * 0.45) {
-                lines[lines.count - 1].append(g)
-            } else {
-                lines.append([g])
+        guard let all = page.selection(for: page.bounds(for: .cropBox)) else { return [] }
+        var rows: [(y: CGFloat, x: CGFloat, cells: [String])] = []
+        for line in all.selectionsByLine() {
+            let range = line.range(at: 0, on: page)
+            guard range.location != NSNotFound, range.length > 0 else { continue }
+            var glyphs: [(String, CGRect)] = []
+            // Ranges and selections share one index space (characterBounds(at:) does not), so use selections.
+            for i in range.location..<NSMaxRange(range) {
+                guard let one = page.selection(for: NSRange(location: i, length: 1)), let c = one.string,
+                      !c.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { continue }
+                let b = one.bounds(for: page)
+                // The newline slot at the end of a line selects the previous glyph again.
+                if b.isEmpty || glyphs.last?.1 == b { continue }
+                glyphs.append((c, b))
             }
-        }
-        return lines.map { line in
-            let sorted = line.sorted { $0.r.minX < $1.r.minX }
+            guard !glyphs.isEmpty else { continue }
+            glyphs.sort { $0.1.minX < $1.1.minX }
+            let em = max(glyphs.map(\.1.height).sorted()[glyphs.count / 2], 4)
             var cells: [String] = []
-            var cell = ""
-            var lastMax: CGFloat?
-            for g in sorted {
-                if let lm = lastMax, g.c != " ", g.r.minX - lm > median * 1.5 {
-                    cells.append(cell.trimmingCharacters(in: .whitespaces))
-                    cell = ""
+            var cell = glyphs[0].0
+            for k in 1..<glyphs.count {
+                let gap = glyphs[k].1.minX - glyphs[k - 1].1.maxX
+                if gap > em * 0.9 {
+                    cells.append(cell); cell = glyphs[k].0
+                } else {
+                    cell += (gap > em * 0.18 ? " " : "") + glyphs[k].0
                 }
-                cell += g.c
-                if g.c != " " { lastMax = g.r.maxX }
             }
-            cells.append(cell.trimmingCharacters(in: .whitespaces))
-            return cells
-        }.filter { !$0.allSatisfy(\.isEmpty) }
+            cells.append(cell)
+            rows.append((line.bounds(for: page).midY, glyphs[0].1.minX, cells))
+        }
+        return rows.sorted { abs($0.y - $1.y) > 2 ? $0.y > $1.y : $0.x < $1.x }.map(\.cells)
     }
 }
 
