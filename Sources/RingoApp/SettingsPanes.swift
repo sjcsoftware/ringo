@@ -183,7 +183,9 @@ final class PermissionState: ObservableObject {
     @Published var accessibility = ShortcutService.accessibilityTrusted
     @Published var automation = FinderSelection.automationAllowed
     func refresh() {
-        accessibility = ShortcutService.accessibilityTrusted
+        let trusted = ShortcutService.accessibilityTrusted
+        if trusted && !accessibility { AppDelegate.shared.shortcuts.apply(SettingsStore.shared.load().shortcuts) }
+        accessibility = trusted
         automation = FinderSelection.automationAllowed
     }
     func refreshSoon() {

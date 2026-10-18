@@ -63,9 +63,11 @@ final class OnboardingPermissions: ObservableObject {
     deinit { timer?.invalidate() }
 
     func refresh() {
-        accessibility = ShortcutService.accessibilityTrusted
+        let trusted = ShortcutService.accessibilityTrusted
+        // Monitors added before trust was granted receive nothing; re-add them once, on the change.
+        if trusted && !accessibility { AppDelegate.shared.shortcuts.apply(SettingsStore.shared.load().shortcuts) }
+        accessibility = trusted
         finderStatus = FinderSelection.automationStatus()
-        if accessibility { AppDelegate.shared.shortcuts.apply(SettingsStore.shared.load().shortcuts) }
     }
 
     var finderAllowed: Bool { finderStatus == noErr }

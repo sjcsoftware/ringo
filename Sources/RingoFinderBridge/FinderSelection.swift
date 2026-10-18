@@ -37,14 +37,17 @@ public enum FinderSelection {
             return .failure(.finderNotFrontmost(frontmost: front?.localizedName))
         }
         guard NSRunningApplication.runningApplications(withBundleIdentifier: finderID).first != nil else { return .failure(.finderNotRunning) }
+        // A hung Finder must not freeze the menu for AppleScript's default two minutes.
         let source = """
-        tell application id "com.apple.finder"
-          set out to {}
-          repeat with x in (get selection)
-            set end of out to POSIX path of (x as alias)
-          end repeat
-          return out
-        end tell
+        with timeout of 5 seconds
+          tell application id "com.apple.finder"
+            set out to {}
+            repeat with x in (get selection)
+              set end of out to POSIX path of (x as alias)
+            end repeat
+            return out
+          end tell
+        end timeout
         """
         var error: NSDictionary?
         guard let script = NSAppleScript(source: source) else { return .failure(.scriptError("could not compile")) }
@@ -52,6 +55,7 @@ public enum FinderSelection {
         if let error {
             let code = error[NSAppleScript.errorNumber] as? Int ?? 0
             if code == -1743 || code == -1744 { return .failure(.automationDenied) }
+            if code == -1712 { return .failure(.scriptError("Finder did not answer within 5 seconds. If macOS asked for permission, choose Allow and try again")) }
             return .failure(.scriptError(error[NSAppleScript.errorMessage] as? String ?? "error \(code)"))
         }
         var urls: [URL] = []
