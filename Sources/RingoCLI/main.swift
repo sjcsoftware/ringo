@@ -18,7 +18,7 @@ struct RingoRoot: AsyncParsableCommand {
         """,
         version: RingoEngine.version,
         subcommands: [Convert.self, Plan.self, Formats.self, Capabilities.self, Inspect.self, ToolsCommand.self, Compress.self, Metadata.self,
-                      Edit.self, Crop.self, Annotate.self, Redact.self, Archive.self, Extract.self, Batch.self, Providers.self, Settings.self, Version.self]
+                      Edit.self, Crop.self, Annotate.self, Redact.self, Archive.self, Extract.self, Watch.self, Batch.self, Providers.self, Settings.self, Version.self]
     )
 }
 
@@ -34,6 +34,7 @@ func rewriteShorthand(_ args: [String]) -> [String] {
     return ["convert"] + files + ["--to", last] + flags
 }
 
+setvbuf(stdout, nil, _IOLBF, 0) // live output (watch, events) reaches pipes promptly
 let argv = rewriteShorthand(Array(CommandLine.arguments.dropFirst()))
 let wantsJSON = argv.contains("--json")
 do {
