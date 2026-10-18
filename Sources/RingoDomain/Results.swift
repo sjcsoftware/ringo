@@ -44,12 +44,15 @@ public struct FileResult: Codable, Hashable, Sendable {
     public var bytesOut: Int64?
     public var durationMs: Int?
     public var warnings: [String]
+    /// Known limits of the conversion route (static), separate from per-file warnings.
+    public var limitations: [String]?
     public var details: [String: String]
     public var error: ErrorPayload?
 
     public init(input: String, status: FileStatus, operation: String, target: FormatID? = nil, outputs: [OutputFile] = [],
                 provider: ProviderID? = nil, fidelity: Fidelity? = nil, bytesIn: Int64? = nil, bytesOut: Int64? = nil,
-                durationMs: Int? = nil, warnings: [String] = [], details: [String: String] = [:], error: ErrorPayload? = nil) {
+                durationMs: Int? = nil, warnings: [String] = [], limitations: [String]? = nil, details: [String: String] = [:], error: ErrorPayload? = nil) {
+        self.limitations = limitations
         self.input = input
         self.status = status
         self.operation = operation

@@ -157,7 +157,7 @@ public final class RingoService: @unchecked Sendable {
         if policy.dryRun {
             return FileResult(input: input.originalPath, status: .planned, operation: op, target: target,
                               outputs: entry.plannedOutputs.map { OutputFile(url: URL(fileURLWithPath: $0), format: target, bytes: nil) },
-                              provider: cap.provider, fidelity: cap.fidelity, bytesIn: input.size, warnings: entry.warnings + cap.limitations)
+                              provider: cap.provider, fidelity: cap.fidelity, bytesIn: input.size, warnings: entry.warnings, limitations: cap.limitations)
         }
         let plan = commitPlan(for: input, label: policy.collisionLabel, alwaysLabel: false, policy: policy)
         let workDir: URL
@@ -185,12 +185,11 @@ public final class RingoService: @unchecked Sendable {
             let urls = try OutputCommitter.commit(outcome.files, plan: plan)
             let outputs = zip(urls, outcome.files).map { OutputFile(url: $0, format: $1.format, bytes: Self.size(of: $0)) }
             progress(1)
-            var warnings = entry.warnings + outcome.warnings
-            if s.conversion.showFidelityWarnings { warnings += cap.limitations }
+            let warnings = entry.warnings + outcome.warnings
             return FileResult(input: input.originalPath, status: .succeeded, operation: op, target: target, outputs: outputs,
                               provider: cap.provider, fidelity: outcome.fidelity ?? cap.fidelity, bytesIn: input.size,
                               bytesOut: outputs.compactMap(\.bytes).reduce(0, +), durationMs: Int(Date().timeIntervalSince(started) * 1000),
-                              warnings: warnings, details: outcome.details)
+                              warnings: warnings, limitations: s.conversion.showFidelityWarnings ? cap.limitations : nil, details: outcome.details)
         } catch is CancellationError {
             return .failure(input: input.originalPath, operation: op, target: target, error: RingoError.cancelled)
         } catch {

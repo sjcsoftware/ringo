@@ -82,11 +82,13 @@ enum ImageTools {
             guard let dest = CGImageDestinationCreateWithURL(out as CFURL, ImageIOSupport.uti(for: format)! as CFString, 1, nil) else {
                 throw RingoError.outputWriteFailed(out.path, reason: "could not create destination")
             }
-            let meta = CGImageSourceCopyMetadataAtIndex(src, 0, nil) ?? CGImageMetadataCreateMutable()
+            let meta = CGImageSourceCopyMetadataAtIndex(src, 0, nil).flatMap { CGImageMetadataCreateMutableCopy($0) } ?? CGImageMetadataCreateMutable()
+            CGImageMetadataSetValueMatchingImageProperty(meta, kCGImagePropertyTIFFDictionary, kCGImagePropertyTIFFOrientation, target as CFNumber)
             var err: Unmanaged<CFError>?
-            let ok = CGImageDestinationCopyImageSource(dest, src, [kCGImageDestinationMetadata: meta, kCGImageDestinationMergeMetadata: true,
-                                                                   kCGImageDestinationOrientation: target] as CFDictionary, &err)
+            let ok = CGImageDestinationCopyImageSource(dest, src, [kCGImageDestinationMetadata: meta, kCGImageDestinationMergeMetadata: true] as CFDictionary, &err)
             guard ok else { throw RingoError.providerFailed(provider: "ImageIO", message: err?.takeRetainedValue().localizedDescription ?? "copy failed") }
+            let written = ImageIOSupport.properties(try ImageIOSupport.source(out))[kCGImagePropertyOrientation] as? Int ?? 1
+            guard written == target else { throw RingoError.verificationFailed("orientation tag reads \(written), expected \(target)") }
             var o = ProviderOutcome.single(out, format)
             o.fidelity = .lossless
             o.details["method"] = "orientation tag (no re-encode)"
@@ -339,9 +341,14 @@ enum ImageTools {
             throw RingoError.unsupportedTool(tool: "Edit Metadata", format: format.rawValue, reason: "ImageIO cannot write this format")
         }
         let orientation = ImageIOSupport.properties(src)[kCGImagePropertyOrientation] as? Int ?? 1
-        var opts: [CFString: Any] = [kCGImageMetadataShouldExcludeGPS: true, kCGImageDestinationOrientation: orientation]
+        var opts: [CFString: Any] = [kCGImageMetadataShouldExcludeGPS: true]
         if scope == .all {
-            opts[kCGImageDestinationMetadata] = CGImageMetadataCreateMutable()
+            // Keep only the orientation tag, so the image still displays the right way up.
+            let meta = CGImageMetadataCreateMutable()
+            if orientation != 1 {
+                CGImageMetadataSetValueMatchingImageProperty(meta, kCGImagePropertyTIFFDictionary, kCGImagePropertyTIFFOrientation, orientation as CFNumber)
+            }
+            opts[kCGImageDestinationMetadata] = meta
             opts[kCGImageDestinationMergeMetadata] = false
             opts[kCGImageMetadataShouldExcludeXMP] = true
         } else {

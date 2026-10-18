@@ -271,12 +271,101 @@ public extension SemanticDocument {
         <!DOCTYPE html>
         <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
         <head><meta charset="utf-8"/><title>\(t)</title>
-        <style>body{font-family:-apple-system,Helvetica,sans-serif;line-height:1.5;max-width:46em;margin:2em auto;padding:0 1em}pre{background:#f4f4f4;padding:.8em;overflow:auto}table{border-collapse:collapse}td{border:1px solid #ccc;padding:.2em .5em}</style>
+        <style>body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;line-height:1.5;max-width:46em;margin:2em auto;padding:0 1em}pre{background:#f4f4f4;padding:.8em;overflow:auto}table{border-collapse:collapse}td{border:1px solid #ccc;padding:.2em .5em}</style>
         </head>
         <body>
         \(xhtmlBody())
         </body>
         </html>
         """
+    }
+}
+
+// MARK: - To NSAttributedString (no WebKit)
+
+public extension SemanticDocument {
+    /// Builds styled text directly: headings, emphasis, links, lists, code, quotes and simple tables.
+    func attributed(baseSize: CGFloat = 12) -> NSAttributedString {
+        let out = NSMutableAttributedString()
+        let body = NSFont.systemFont(ofSize: baseSize)
+        let mono = NSFont.monospacedSystemFont(ofSize: baseSize - 1, weight: .regular)
+
+        func paragraphStyle(spacingBefore: CGFloat = 0, after: CGFloat = 6, indent: CGFloat = 0) -> NSMutableParagraphStyle {
+            let p = NSMutableParagraphStyle()
+            p.paragraphSpacingBefore = spacingBefore
+            p.paragraphSpacing = after
+            p.headIndent = indent
+            p.firstLineHeadIndent = indent
+            p.lineHeightMultiple = 1.15
+            return p
+        }
+
+        func runs(_ inlines: [Inline], font base: NSFont, style: NSParagraphStyle) -> NSAttributedString {
+            let s = NSMutableAttributedString()
+            for i in inlines {
+                var f = i.code ? mono : base
+                var traits: NSFontDescriptor.SymbolicTraits = f.fontDescriptor.symbolicTraits
+                if i.bold { traits.insert(.bold) }
+                if i.italic { traits.insert(.italic) }
+                f = NSFont(descriptor: f.fontDescriptor.withSymbolicTraits(traits), size: f.pointSize) ?? f
+                var attrs: [NSAttributedString.Key: Any] = [.font: f, .paragraphStyle: style, .foregroundColor: NSColor.black]
+                if let l = i.link, let u = URL(string: l) { attrs[.link] = u }
+                s.append(NSAttributedString(string: i.text, attributes: attrs))
+            }
+            return s
+        }
+
+        var orderedCounter = 0
+        for b in blocks {
+            if case .listItem(let ordered, _, _) = b, ordered { } else { orderedCounter = 0 }
+            switch b {
+            case .heading(let level, let ins):
+                let size = baseSize * [2.0, 1.6, 1.3, 1.15, 1.05, 1.0][min(level, 6) - 1]
+                let f = NSFont.boldSystemFont(ofSize: size)
+                out.append(runs(ins, font: f, style: paragraphStyle(spacingBefore: size * 0.6, after: size * 0.3)))
+            case .paragraph(let ins):
+                out.append(runs(ins, font: body, style: paragraphStyle()))
+            case .listItem(let ordered, let level, let ins):
+                let style = paragraphStyle(after: 2, indent: CGFloat(level + 1) * 18)
+                style.firstLineHeadIndent = CGFloat(level) * 18 + 4
+                let list = NSTextList(markerFormat: ordered ? .decimal : .disc, options: 0)
+                style.textLists = [list]
+                orderedCounter += 1
+                let marker = ordered ? "\t\(orderedCounter).\t" : "\t•\t"
+                style.tabStops = [NSTextTab(textAlignment: .left, location: CGFloat(level) * 18 + 4), NSTextTab(textAlignment: .left, location: CGFloat(level + 1) * 18)]
+                out.append(NSAttributedString(string: marker, attributes: [.font: body, .paragraphStyle: style]))
+                out.append(runs(ins, font: body, style: style))
+            case .code(let c):
+                let style = paragraphStyle(after: 8, indent: 12)
+                out.append(NSAttributedString(string: c, attributes: [.font: mono, .paragraphStyle: style, .backgroundColor: NSColor(white: 0.95, alpha: 1)]))
+            case .quote(let ins):
+                let f = NSFont(descriptor: body.fontDescriptor.withSymbolicTraits(.italic), size: baseSize) ?? body
+                out.append(runs(ins, font: f, style: paragraphStyle(indent: 24)))
+            case .rule:
+                out.append(NSAttributedString(string: "———", attributes: [.font: body, .paragraphStyle: paragraphStyle(after: 8)]))
+            case .pageBreak:
+                out.append(NSAttributedString(string: "\u{0C}", attributes: [.font: body]))
+                continue
+            case .table(let rows):
+                let table = NSTextTable()
+                table.numberOfColumns = max(rows.map(\.count).max() ?? 1, 1)
+                table.collapsesBorders = true
+                for (r, row) in rows.enumerated() {
+                    for c in 0..<table.numberOfColumns {
+                        let block = NSTextTableBlock(table: table, startingRow: r, rowSpan: 1, startingColumn: c, columnSpan: 1)
+                        block.setWidth(0.5, type: .absoluteValueType, for: .border)
+                        block.setBorderColor(.gray)
+                        block.setWidth(4, type: .absoluteValueType, for: .padding)
+                        let style = NSMutableParagraphStyle()
+                        style.textBlocks = [block]
+                        let f = r == 0 ? NSFont.boldSystemFont(ofSize: baseSize) : body
+                        out.append(NSAttributedString(string: (row[safe: c] ?? "") + "\n", attributes: [.font: f, .paragraphStyle: style]))
+                    }
+                }
+                continue
+            }
+            out.append(NSAttributedString(string: "\n", attributes: [.font: body]))
+        }
+        return out
     }
 }

@@ -106,8 +106,7 @@ public final class NativePDFProvider: ConversionProvider, @unchecked Sendable {
                 case "html": try sem.htmlDocument().write(to: out, atomically: false, encoding: .utf8)
                 case "epub": try EPUB.write(sem, title: title, to: out)
                 case "docx":
-                    let attr = try DocumentIO.attributed(fromHTML: sem.htmlDocument())
-                    _ = try DocumentIO.save(DocumentIO.Loaded(text: attr, attributes: [:]), as: "docx", to: out, title: title)
+                    _ = try DocumentIO.save(DocumentIO.Loaded(text: sem.attributed(), attributes: [:]), as: "docx", to: out, title: title)
                 default:
                     throw RingoError.unsupportedConversion(from: "pdf", to: to.rawValue, reason: "not handled by PDFKit provider")
                 }

@@ -21,7 +21,7 @@ public enum DocumentIO {
             return Loaded(text: plainAttributed(try TextDecoding.read(url)), attributes: [:])
         case "md":
             let doc = MarkdownReader.parse(try TextDecoding.read(url), title: url.deletingPathExtension().lastPathComponent)
-            return Loaded(text: try attributed(fromHTML: doc.htmlDocument()), attributes: [:], semantic: doc)
+            return Loaded(text: doc.attributed(), attributes: [:], semantic: doc)
         case "html":
             let data = try Data(contentsOf: url)
             return try loadData(data, type: .html, url: url)

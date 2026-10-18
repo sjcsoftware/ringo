@@ -298,8 +298,7 @@ public final class NativeHangulProvider: ConversionProvider, @unchecked Sendable
             case "html": try doc.htmlDocument().write(to: out, atomically: false, encoding: .utf8)
             case "epub": try EPUB.write(doc, title: title, to: out, language: "ko")
             default:
-                let attr = try DocumentIO.attributed(fromHTML: doc.htmlDocument())
-                _ = try DocumentIO.save(DocumentIO.Loaded(text: attr, attributes: [:]), as: to, to: out, title: title)
+                _ = try DocumentIO.save(DocumentIO.Loaded(text: doc.attributed(), attributes: [:]), as: to, to: out, title: title)
             }
         }
         var o = ProviderOutcome.single(out, to)
