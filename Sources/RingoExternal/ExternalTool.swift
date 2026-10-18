@@ -61,3 +61,35 @@ public extension ConversionRequest {
     /// Absolute input path; never begins with "-", so it cannot be parsed as an option.
     var inputPath: String { input.url.standardizedFileURL.path }
 }
+
+/// Remembers results of probing external binaries (FFmpeg's encoder list) across launches, keyed by
+/// the binary's path, size and modification date, so a cold radial does not wait for a subprocess.
+enum ProbeCache {
+    static var url: URL {
+        let base = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        return base.appendingPathComponent("Ringo", isDirectory: true).appendingPathComponent("probes.json")
+    }
+
+    static func fingerprint(_ binary: URL) -> String? {
+        let resolved = binary.resolvingSymlinksInPath()
+        guard let a = try? FileManager.default.attributesOfItem(atPath: resolved.path) else { return nil }
+        let size = (a[.size] as? NSNumber)?.int64Value ?? 0
+        let mod = (a[.modificationDate] as? Date)?.timeIntervalSince1970 ?? 0
+        return "\(resolved.path)|\(size)|\(Int(mod))"
+    }
+
+    static func load(binary: URL, key: String) -> [String]? {
+        guard let fp = fingerprint(binary), let data = try? Data(contentsOf: url),
+              let all = try? JSONDecoder().decode([String: [String]].self, from: data) else { return nil }
+        return all[fp + "|" + key]
+    }
+
+    static func store(binary: URL, key: String, value: [String]) {
+        guard let fp = fingerprint(binary) else { return }
+        var all = (try? JSONDecoder().decode([String: [String]].self, from: Data(contentsOf: url))) ?? [:]
+        all = all.filter { !$0.key.hasSuffix("|" + key) || $0.key.hasPrefix(fp) }
+        all[fp + "|" + key] = value
+        try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try? JSONEncoder().encode(all).write(to: url, options: .atomic)
+    }
+}

@@ -8,6 +8,7 @@ public final class PandocProvider: ConversionProvider, @unchecked Sendable {
     public let id: ProviderID = "pandoc"
     public let name = "Pandoc"
     public let defaultPriority = 18
+    public let isOptional = true
     public let tool = ExternalTool("pandoc")
     static let hint = "Install it with `brew install pandoc`."
 
@@ -75,6 +76,7 @@ public final class LibreOfficeProvider: ConversionProvider, @unchecked Sendable 
     public let id: ProviderID = "libreoffice"
     public let name = "LibreOffice"
     public let defaultPriority = 12
+    public let isOptional = true
     public let tool = ExternalTool("soffice", extraPaths: ["/Applications/LibreOffice.app/Contents/MacOS"])
     static let hint = "Install it with `brew install --cask libreoffice` (about 1 GB)."
 
@@ -161,6 +163,7 @@ public final class CalibreProvider: ConversionProvider, @unchecked Sendable {
     public let id: ProviderID = "calibre"
     public let name = "Calibre"
     public let defaultPriority = 35
+    public let isOptional = true
     public let tool = ExternalTool("ebook-convert", extraPaths: ["/Applications/calibre.app/Contents/MacOS"])
     static let hint = "Install it with `brew install --cask calibre`."
 
@@ -199,6 +202,7 @@ public final class AppleIWorkProvider: ConversionProvider, @unchecked Sendable {
     public let id: ProviderID = "iwork"
     public let name = "Apple Pages & Keynote"
     public let defaultPriority = 14
+    public let isOptional = true
     let osascript = URL(fileURLWithPath: "/usr/bin/osascript")
 
     public init() {}

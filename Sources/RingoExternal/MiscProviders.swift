@@ -7,6 +7,7 @@ public final class WOFF2Provider: ConversionProvider, @unchecked Sendable {
     public let id: ProviderID = "woff2"
     public let name = "woff2 tools"
     public let defaultPriority = 30
+    public let isOptional = true
     let compress = ExternalTool("woff2_compress", versionArgs: [])
     let decompress = ExternalTool("woff2_decompress", versionArgs: [])
     static let hint = "Install them with `brew install woff2`."
@@ -58,6 +59,7 @@ public final class AssimpProvider: ConversionProvider, @unchecked Sendable {
     public let id: ProviderID = "assimp"
     public let name = "Assimp"
     public let defaultPriority = 30
+    public let isOptional = true
     let tool = ExternalTool("assimp", versionArgs: ["version"])
     static let hint = "Install it with `brew install assimp`."
 
@@ -100,6 +102,7 @@ public final class LibreDWGProvider: ConversionProvider, @unchecked Sendable {
     public let id: ProviderID = "libredwg"
     public let name = "LibreDWG"
     public let defaultPriority = 30
+    public let isOptional = true
     let tool = ExternalTool("dwg2dxf")
     static let hint = "Install it with `brew install libredwg`."
 

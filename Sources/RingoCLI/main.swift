@@ -8,12 +8,13 @@ struct RingoRoot: AsyncParsableCommand {
         commandName: "ringo",
         abstract: "Local file conversion and file tools. Same engine as Ringo.app; no network, no uploads.",
         discussion: """
-        Outputs are written next to each source file with collision-safe names; originals are never modified
+        Outputs are written next to each source file with collision-safe names. Originals are never modified \
         unless --in-place is given. Add --json for machine-readable output (schema ringo/1).
 
         Shorthand: `ringo photo.png webp` is `ringo convert photo.png --to webp`.
-        Exit codes: 0 ok, 1 partial failure, 2 invalid arguments, 3 unsupported, 4 provider missing,
-        5 input problem, 6 output problem, 7 cancelled/timeout, 8 verification failed, 9 provider failed, 10 internal.
+
+        Exit codes: 0 ok, 1 partial failure, 2 invalid arguments, 3 unsupported, 4 provider missing, \
+        5 input problem, 6 output problem, 7 cancelled or timed out, 8 verification failed, 9 provider failed, 10 internal.
         """,
         version: RingoEngine.version,
         subcommands: [Convert.self, Plan.self, Formats.self, Capabilities.self, Inspect.self, ToolsCommand.self, Compress.self, Metadata.self,

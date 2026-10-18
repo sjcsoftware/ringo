@@ -43,6 +43,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         settingsModel.$settings.dropFirst().sink { [weak self] s in self?.settingsChanged(s) }.store(in: &cancellables)
 
+        // Warm the capability table once, at low priority, so the first radial is as fast as later ones.
+        // Runs one cached probe at most; no conversion work happens while idle.
+        let service = self.service
+        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 2) { _ = service.registry.allCapabilities() }
+
         if let debug = ProcessInfo.processInfo.environment["RINGO_DEBUG_INSPECTOR"] {
             let parts = debug.split(separator: ":", maxSplits: 1).map(String.init)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [self] in
@@ -56,10 +61,42 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     }
                 }
             }
+        } else if ProcessInfo.processInfo.environment["RINGO_DEBUG_TIMING"] != nil {
+            debugTiming()
         } else if let debug = ProcessInfo.processInfo.environment["RINGO_DEBUG_PRESENT"] {
             debugPresent(debug)
         } else if !s.general.onboardingCompleted {
             DispatchQueue.main.async { OnboardingWindowController.show() }
+        }
+    }
+
+    /// Measures the radial hot path: panel on screen (show) and menu populated (present), cold then warm.
+    func debugTiming() {
+        let files = (ProcessInfo.processInfo.environment["RINGO_DEBUG_TIMING"] ?? "").split(separator: ",").map { URL(fileURLWithPath: String($0)) }
+        let s = store.load()
+        let center = NSPoint(x: NSScreen.main?.visibleFrame.midX ?? 400, y: NSScreen.main?.visibleFrame.midY ?? 400)
+        var report: [String] = []
+        func run(_ label: String, _ next: @escaping () -> Void) {
+            let t0 = CFAbsoluteTimeGetCurrent()
+            radial.show(mode: .convert, settings: s, at: center)
+            let t1 = CFAbsoluteTimeGetCurrent()
+            let (inputs, _) = service.resolve(files.map(\.path))
+            radial.present(inputs: inputs, service: service, settings: s)
+            let t2 = CFAbsoluteTimeGetCurrent()
+            // Let SwiftUI commit a frame before stopping the clock for "visible".
+            DispatchQueue.main.async {
+                CATransaction.flush()
+                let t3 = CFAbsoluteTimeGetCurrent()
+                report.append(String(format: "%@ show=%.1fms populated=%.1fms frame=%.1fms", label, (t1 - t0) * 1000, (t2 - t0) * 1000, (t3 - t0) * 1000))
+                self.radial.dismiss()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: next)
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            run("cold") { run("warm1") { run("warm2") {
+                FileHandle.standardError.write(Data((report.joined(separator: "\n") + "\n").utf8))
+                NSApp.terminate(nil)
+            } } }
         }
     }
 

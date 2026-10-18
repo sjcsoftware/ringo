@@ -90,10 +90,14 @@ public protocol ConversionProvider: AnyObject, Sendable {
     func convert(_ request: ConversionRequest, context: JobContext) async throws -> ProviderOutcome
     /// Permissions the provider needs (e.g. Automation for Pages). Shown in capabilities output.
     var requiredPermissions: [String] { get }
+    /// True for user-installed tools and apps. Their "implemented" edges are reported as
+    /// provider-dependent, because they only run when the tool is present.
+    var isOptional: Bool { get }
 }
 
 public extension ConversionProvider {
     var requiredPermissions: [String] { [] }
+    var isOptional: Bool { false }
     func availability(of edge: EdgeSpec) -> (available: Bool, reason: String?) {
         let s = status()
         return s.installed ? (true, nil) : (false, "Requires \(s.name). \(s.installHint ?? "")".trimmingCharacters(in: .whitespaces))

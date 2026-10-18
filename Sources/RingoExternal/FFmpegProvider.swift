@@ -8,6 +8,7 @@ public final class FFmpegProvider: ConversionProvider, @unchecked Sendable {
     public let id: ProviderID = "ffmpeg"
     public let name = "FFmpeg"
     public let defaultPriority = 30
+    public let isOptional = true
     public let ffmpeg = ExternalTool("ffmpeg", versionArgs: ["-hide_banner", "-version"])
     public let ffprobe = ExternalTool("ffprobe", versionArgs: ["-hide_banner", "-version"])
     static let hint = "Install it with `brew install ffmpeg`."
@@ -105,7 +106,9 @@ public final class FFmpegProvider: ConversionProvider, @unchecked Sendable {
         if let encoderCache { lock.unlock(); return encoderCache }
         lock.unlock()
         var set = Set<String>()
-        if let url = ffmpeg.url {
+        if let url = ffmpeg.url, let cached = ProbeCache.load(binary: url, key: "encoders") {
+            set = Set(cached)
+        } else if let url = ffmpeg.url {
             let p = Process()
             p.executableURL = url
             p.arguments = ["-hide_banner", "-encoders"]
@@ -120,6 +123,7 @@ public final class FFmpegProvider: ConversionProvider, @unchecked Sendable {
                     let parts = line.split(separator: " ", omittingEmptySubsequences: true)
                     if parts.count >= 2, parts[0].count == 6 { set.insert(String(parts[1])) }
                 }
+                ProbeCache.store(binary: url, key: "encoders", value: set.sorted())
             }
         }
         lock.lock(); encoderCache = set; lock.unlock()

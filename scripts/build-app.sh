@@ -29,6 +29,13 @@ if [[ ! -f build/AppIcon.icns ]]; then
 fi
 cp build/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 
+echo "→ Generating shell completions…"
+mkdir -p "$APP/Contents/Resources/completions" completions
+for sh in zsh bash fish; do
+  "$APP/Contents/Helpers/ringo" --generate-completion-script $sh > "completions/ringo.$sh"
+  cp "completions/ringo.$sh" "$APP/Contents/Resources/completions/"
+done
+
 echo "→ Signing (ad hoc, hardened runtime)…"
 codesign --force --options runtime --sign - "$APP/Contents/Helpers/ringo"
 codesign --force --options runtime --entitlements Resources/Ringo.entitlements --sign - "$APP"

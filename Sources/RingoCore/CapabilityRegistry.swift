@@ -40,7 +40,8 @@ public final class CapabilityRegistry: @unchecked Sendable {
         if let cachedAll { return cachedAll }
         var out: [Capability] = []
         for p in providers {
-            for e in p.edges {
+            for var e in p.edges {
+                if p.isOptional && e.status == .implemented { e.status = .providerDependent }
                 let a = p.availability(of: e)
                 out.append(Capability(edge: e, provider: p.id, providerName: p.name, available: a.available, reason: a.reason,
                                       permissions: p.requiredPermissions))
