@@ -8,7 +8,7 @@ import RingoNative
 
 /// Composition root shared by the CLI and the app: both get the same registry and engine.
 public enum RingoEngine {
-    public static let version = "1.0.0"
+    public static let version = "1.1.0"
 
     /// Explicit two-step routes. Every chain is listed in docs/FORMATS.md.
     public static let chains: [ChainProvider.Chain] = [

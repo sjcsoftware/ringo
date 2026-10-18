@@ -58,7 +58,7 @@
 
 Requires **macOS 14 Sonoma or later**. The downloadable build is for **Apple Silicon**.
 
-1. Download `Ringo-1.0.0-arm64.dmg` from [Releases](https://github.com/sjcsoftware/ringo/releases/latest).
+1. Download `Ringo-1.1.0-arm64.dmg` from [Releases](https://github.com/sjcsoftware/ringo/releases/latest).
 2. Open the DMG and drag **Ringo** into **Applications**.
 3. Launch Ringo and complete the short setup.
 
@@ -79,6 +79,10 @@ The current release is ad hoc signed and is **not notarized**. macOS may require
 | Arrow keys or <kbd>Tab</kbd> | Navigate the menu |
 | Type a format | Search, including submenus |
 | <kbd>Esc</kbd> | Clear search, go back, or close |
+
+Double Shift and double Command work only while **Finder is in front with at least one file selected**, including files on the Desktop. They do nothing in other apps, with no selection, with only folders selected, or if Finder cannot return the selection. In a mixed file/folder selection, only files are used. This rule always applies, even if the Finder preference is disabled.
+
+**Settings → General → Key combinations require Finder in front** controls the alternate key combinations only. The menu bar actions can read Finder's selection while another app is active and show permission or selection errors when needed.
 
 **Permissions:** Finder Automation lets Ringo read your selection. Accessibility enables the double-tap shortcuts; the alternate keyboard shortcuts work without it. Pages and Keynote request Automation access only for conversions that use them.
 
@@ -113,7 +117,7 @@ ringo watch ~/Scans --to pdf --move-originals
 ringo capabilities --from pdf --json
 ```
 
-See the [CLI reference](docs/CLI.md) for commands, JSON output, exit codes, and automation examples. The [security notes](SECURITY.md) explain output handling, archive extraction, and redaction.
+See the [CLI reference](docs/CLI.md) for commands, JSON output, exit codes, and automation examples, and the [changelog](docs/CHANGELOG.md) for release changes. The [security notes](SECURITY.md) explain output handling, archive extraction, and redaction.
 
 ## Build from source
 

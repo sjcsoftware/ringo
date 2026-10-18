@@ -62,7 +62,7 @@ Every command prints one envelope with `--json`:
 {
   "schema": "ringo/1",
   "schemaVersion": 1,
-  "ringoVersion": "1.0.0",
+  "ringoVersion": "1.1.0",
   "command": "convert",
   "ok": true,
   "exitCode": 0,

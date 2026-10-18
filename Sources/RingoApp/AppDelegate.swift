@@ -28,6 +28,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.setActivationPolicy(s.general.showDockIcon ? .regular : .accessory)
         applyMenuBarIcon(s.general.showMenuBarIcon)
 
+        shortcuts.onDoubleTap = { [weak self] t in self?.invoke(t == .convert ? .convert : .tools, doubleTap: true) }
         shortcuts.onTrigger = { [weak self] t in self?.invoke(t == .convert ? .convert : .tools) }
         shortcuts.onDragTrigger = { [weak self] t in self?.invokeFromDrag(t == .convert ? .convert : .tools) }
         shortcuts.apply(s.shortcuts)
@@ -152,9 +153,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: Invocation
 
-    /// Finder selection → radial at the pointer. The panel appears first (loading state); the selection
-    /// is read on the next run-loop turn so Finder automation never delays the menu.
-    func invoke(_ mode: RadialMode, at point: NSPoint? = nil) {
+    /// Double taps validate Finder's selected files before changing any UI. Explicit hotkeys retain
+    /// the configurable frontmost rule and display selection/permission errors in the radial.
+    func invoke(_ mode: RadialMode, at point: NSPoint? = nil, doubleTap: Bool = false) {
+        let selectedFiles: [URL]?
+        if doubleTap {
+            guard let urls = FinderSelection.filesForDoubleTap() else { return }
+            selectedFiles = urls
+        } else {
+            selectedFiles = nil
+        }
         if radial.isVisible {
             let same = radial.model.mode == mode
             radial.dismiss()
@@ -163,6 +171,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         inspectors.close()
         let s = store.load()
         radial.show(mode: mode, settings: s, at: point)
+        if let selectedFiles {
+            present(selectedFiles, settings: s)
+            return
+        }
         DispatchQueue.main.async { [weak self] in
             guard let self, self.radial.isVisible else { return }
             switch FinderSelection.current(requireFrontmost: s.general.requireFinderFrontmost) {

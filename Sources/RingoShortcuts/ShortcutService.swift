@@ -14,6 +14,9 @@ public enum RadialTrigger: String, Sendable {
 /// Monitors are passive: events are observed, never consumed or modified.
 @MainActor
 public final class ShortcutService {
+    /// A recognized modifier double tap. The app validates the active Finder selection before opening UI.
+    public var onDoubleTap: ((RadialTrigger) -> Void)?
+    /// Explicit key-combination invocation (Carbon hotkeys).
     public var onTrigger: ((RadialTrigger) -> Void)?
     /// Experimental drag invocation: a watched modifier was tapped while a mouse drag is in progress.
     public var onDragTrigger: ((RadialTrigger) -> Void)?
@@ -88,7 +91,7 @@ public final class ShortcutService {
                 onDragTrigger?(t)
                 return
             }
-            if let m = recognizer.handle(.modifiers(set, time: e.timestamp)), let t = map[m] { onTrigger?(t) }
+            if let m = recognizer.handle(.modifiers(set, time: e.timestamp)), let t = map[m] { onDoubleTap?(t) }
         case .keyDown:
             _ = recognizer.handle(.key(time: e.timestamp))
         case .leftMouseDragged:

@@ -35,7 +35,7 @@ struct GeneralPane: View {
                 DescribedToggle(title: "Reveal outputs in Finder", detail: "Select the new files in Finder automatically.", isOn: $model.settings.general.revealOutputInFinder)
             }
             Section("Finder selection") {
-                DescribedToggle(title: "Only when Finder is in front", detail: "Prevents acting on an old Finder selection while you work in another app.",
+                DescribedToggle(title: "Key combinations require Finder in front", detail: "Double taps always require Finder in front with files selected, regardless of this setting.",
                                 isOn: $model.settings.general.requireFinderFrontmost)
                 LabeledContent("iCloud files") {
                     Text("Not downloaded files are refused. Download them in Finder first.").foregroundStyle(.secondary).font(.callout)
@@ -85,7 +85,7 @@ struct ShortcutsPane: View {
     var body: some View {
         Form {
             Section {
-                Text("Select files in Finder, then use a trigger. The radial opens at the pointer and stays until you choose, click elsewhere or press Escape.")
+                Text("Double taps open the radial only when Finder is in front with files selected. They do nothing in other apps, with no selection, or with only folders selected. The radial stays until you choose, click elsewhere or press Escape.")
                     .font(.callout).foregroundStyle(.secondary)
             }
             GestureSection(title: "Convert", gesture: $model.settings.shortcuts.convert)

@@ -23,7 +23,7 @@ public struct RingoSettings: Codable, Equatable, Sendable {
         public var showDockIcon = false
         public var notifyOnCompletion = false
         public var revealOutputInFinder = false
-        /// Only read the Finder selection when Finder is the frontmost app.
+        /// Require Finder in front for explicit key combinations. Double taps always require it.
         public var requireFinderFrontmost = true
         /// Ask before converting files that are iCloud placeholders. Ringo never downloads them itself.
         public var cloudPlaceholderPolicy = "refuse"

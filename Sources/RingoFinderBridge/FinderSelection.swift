@@ -29,6 +29,27 @@ public enum FinderSelection {
 
     public static var finderIsFrontmost: Bool { NSWorkspace.shared.frontmostApplication?.bundleIdentifier == finderID }
 
+    /// Passive double taps must never open UI for a background, empty or unreadable selection.
+    /// This rule is mandatory, independent of the preference for explicit key combinations.
+    @MainActor
+    public static func filesForDoubleTap() -> [URL]? {
+        filesForDoubleTap(isFrontmost: { finderIsFrontmost }, readSelection: { current(requireFrontmost: true) })
+    }
+
+    @MainActor
+    static func filesForDoubleTap(isFrontmost: () -> Bool, readSelection: () -> Result<[URL], Failure>) -> [URL]? {
+        // Avoid Apple Events (and permission prompts) altogether while another app is active.
+        guard isFrontmost(), case .success(let urls) = readSelection() else { return nil }
+        let files = urls.filter {
+            guard let values = try? $0.resolvingSymlinksInPath().resourceValues(forKeys: [.isRegularFileKey, .isPackageKey]) else { return false }
+            // Finder presents document packages (such as RTFD) as files, too.
+            return values.isRegularFile == true || values.isPackage == true
+        }
+        // Apple Events may run a nested event loop; discard the result if the user switched apps.
+        guard !files.isEmpty, isFrontmost() else { return nil }
+        return files
+    }
+
     /// Must be called on the main thread (NSAppleScript is not thread-safe).
     @MainActor
     public static func current(requireFrontmost: Bool) -> Result<[URL], Failure> {

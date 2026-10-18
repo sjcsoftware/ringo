@@ -3,8 +3,88 @@ import CoreGraphics
 import Foundation
 import Testing
 import RingoEngine
+@testable import RingoFinderBridge
 @testable import RingoRadialUI
 @testable import RingoShortcuts
+
+@MainActor
+@Suite("Finder double-tap selection gate")
+struct FinderDoubleTapTests {
+    @Test func backgroundFinderDoesNotReadStaleSelection() {
+        var reads = 0
+        let files = FinderSelection.filesForDoubleTap(isFrontmost: { false }, readSelection: {
+            reads += 1
+            return .success([URL(fileURLWithPath: "/tmp/stale.png")])
+        })
+        #expect(files == nil)
+        #expect(reads == 0, "Double taps in other apps must not send Apple Events or prompt for Automation")
+    }
+
+    @Test func selectedFilesAreKeptInOrder() throws {
+        let fx = try Fixtures()
+        let first = try fx.png("first.png")
+        let second = try fx.write("second.txt", "hello")
+        let files = FinderSelection.filesForDoubleTap(isFrontmost: { true }, readSelection: { .success([first, second]) })
+        #expect(files == [first, second])
+    }
+
+    @Test func emptyFolderOnlyAndMissingSelectionsAreIgnored() throws {
+        let fx = try Fixtures()
+        let folder = fx.url("folder")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        for selection: [URL] in [[], [folder], [fx.url("deleted.png")], [folder, fx.url("deleted.png")]] {
+            #expect(FinderSelection.filesForDoubleTap(isFrontmost: { true }, readSelection: { .success(selection) }) == nil)
+        }
+    }
+
+    @Test func mixedSelectionIncludesOnlyFiles() throws {
+        let fx = try Fixtures()
+        let file = try fx.png()
+        let folder = fx.url("folder")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let files = FinderSelection.filesForDoubleTap(isFrontmost: { true }, readSelection: {
+            .success([folder, file, fx.url("missing.png")])
+        })
+        #expect(files == [file])
+    }
+
+    @Test func documentPackagesAndSymlinksToFilesAreAccepted() throws {
+        let fx = try Fixtures()
+        let file = try fx.png()
+        let link = fx.url("linked.png")
+        try FileManager.default.createSymbolicLink(at: link, withDestinationURL: file)
+        let package = fx.url("document.rtfd")
+        try FileManager.default.createDirectory(at: package, withIntermediateDirectories: true)
+        let files = FinderSelection.filesForDoubleTap(isFrontmost: { true }, readSelection: { .success([package, link]) })
+        #expect(files == [package, link])
+    }
+
+    @Test(arguments: [FinderSelection.Failure.emptySelection, .automationDenied, .finderNotRunning,
+                      .finderNotFrontmost(frontmost: "Safari"), .scriptError("timeout")])
+    func selectionFailuresAreIgnored(failure: FinderSelection.Failure) {
+        #expect(FinderSelection.filesForDoubleTap(isFrontmost: { true }, readSelection: { .failure(failure) }) == nil)
+    }
+
+    @Test func switchingAppsDuringSelectionReadCancelsInvocation() throws {
+        let fx = try Fixtures()
+        let file = try fx.png()
+        var frontmost = true
+        let files = FinderSelection.filesForDoubleTap(isFrontmost: { frontmost }, readSelection: {
+            frontmost = false
+            return .success([file])
+        })
+        #expect(files == nil)
+    }
+
+    @Test func eachDoubleTapReadsTheSelectionAgain() throws {
+        let fx = try Fixtures()
+        let file = try fx.png()
+        var selection = [file]
+        #expect(FinderSelection.filesForDoubleTap(isFrontmost: { true }, readSelection: { .success(selection) }) == [file])
+        selection = []
+        #expect(FinderSelection.filesForDoubleTap(isFrontmost: { true }, readSelection: { .success(selection) }) == nil)
+    }
+}
 
 @MainActor
 @Suite("Progress panel", .serialized)
