@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.0
+
+- Fixed the Settings → Providers crash by moving tool probes out of SwiftUI view construction and off the main thread. Discovery now shows loading progress and keeps Settings responsive.
+- Added Settings → About → Check for Updates. It fetches the latest stable GitHub release and offers a signed Sparkle update with installation and relaunch.
+- Added release signing, an update feed, and bundled Sparkle framework and license. Update checks are manual; file conversions and provider discovery stay offline.
+- Added regression tests for release parsing, version comparison, architecture compatibility, offline failures, and GitHub API errors.
+
 ## 1.1.0
 
 - Double Shift (Convert) and double Command (File Tools) open Ringo only when Finder is in front with files selected. Background Finder selections, empty selections, folders alone, missing files, and selection errors do not open or change Ringo's UI.

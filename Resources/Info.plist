@@ -15,6 +15,13 @@
 	<key>LSApplicationCategoryType</key><string>public.app-category.utilities</string>
 	<key>LSMinimumSystemVersion</key><string>14.0</string>
 	<key>LSUIElement</key><true/>
+	<key>SUFeedURL</key><string>https://raw.githubusercontent.com/sjcsoftware/ringo/main/appcast.xml</string>
+	<key>SUPublicEDKey</key><string>6fCj55pDL6GHVxQ8CDhEToPOKdf/CjX/KTghM9YrUm4=</string>
+	<key>SUEnableAutomaticChecks</key><false/>
+	<key>SUAllowsAutomaticUpdates</key><false/>
+	<key>SUEnableSystemProfiling</key><false/>
+	<key>SUEnableInstallerLauncherService</key><true/>
+	<key>SUVerifyUpdateBeforeExtraction</key><true/>
 	<key>NSHighResolutionCapable</key><true/>
 	<key>NSSupportsAutomaticTermination</key><false/>
 	<key>NSAppleEventsUsageDescription</key>

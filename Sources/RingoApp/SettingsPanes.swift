@@ -3,6 +3,7 @@ import RingoEngine
 import RingoFinderBridge
 import RingoRadialUI
 import RingoShortcuts
+import RingoUpdates
 import ServiceManagement
 import SwiftUI
 import UserNotifications
@@ -44,7 +45,7 @@ struct GeneralPane: View {
             Section("Privacy") {
                 LabeledContent("Network") { Text("Never used for conversions or tools").foregroundStyle(.secondary) }
                 LabeledContent("Telemetry") { Text("None").foregroundStyle(.secondary) }
-                LabeledContent("Updates") { Text("Manual (Homebrew or a new download); Ringo never checks online").foregroundStyle(.secondary) }
+                LabeledContent("Updates") { Text("Checks GitHub only when you click Check for Updates in About").foregroundStyle(.secondary) }
             }
         }
         .settingsPane()
@@ -603,6 +604,8 @@ struct AdvancedPane: View {
 // MARK: - About
 
 struct AboutPane: View {
+    @ObservedObject private var updater = UpdaterManager.shared
+
     var body: some View {
         Form {
             Section {
@@ -610,17 +613,36 @@ struct AboutPane: View {
                     Image(systemName: "circle.circle").font(.system(size: 56, weight: .light)).foregroundStyle(.tint)
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Ringo").font(.largeTitle.bold())
-                        Text("Version \(RingoEngine.version)").foregroundStyle(.secondary)
+                        Text("Version \(updater.installedVersion)").foregroundStyle(.secondary)
                         Text("A radial menu for converting and editing files, entirely on your Mac.").foregroundStyle(.secondary)
                     }
                 }
+            }
+            Section("Updates") {
+                Text(updater.message).foregroundStyle(.secondary).textSelection(.enabled)
+                HStack {
+                    Button("Check for Updates") { Task { await updater.checkForUpdates() } }
+                        .disabled(updater.isChecking)
+                    if updater.isChecking { ProgressView().controlSize(.small) }
+                    if let version = updater.availableVersion {
+                        Button("Update to \(version)…") { updater.installUpdate() }
+                            .disabled(!updater.canInstall)
+                    }
+                    Link("Release Notes", destination: GitHubReleaseClient.releasesURL)
+                }
+                Text("Downloads a signed update, then installs and relaunches Ringo. File conversions stay on your Mac.")
+                    .font(.caption).foregroundStyle(.secondary)
+                #if DEBUG
+                Text("Installation is disabled in debug builds. Use a release build to update.")
+                    .font(.caption).foregroundStyle(.secondary)
+                #endif
             }
             Section("How it works") {
                 Text("Select files in Finder, double-tap ⇧ for Convert or ⌘ for File Tools. Pick a wedge with the pointer, a number key or the arrow keys and Return. New files appear next to the originals.")
                     .foregroundStyle(.secondary)
             }
             Section("Open source components") {
-                Text("Ringo uses Apple system frameworks and, only when you have installed them, FFmpeg, ImageMagick, librsvg, Pandoc, LibreOffice, Calibre, Ghostscript, woff2, Assimp and LibreDWG. None of these are bundled. swift-argument-parser (Apache-2.0) is built into the CLI.")
+                Text("Ringo uses Apple system frameworks and, only when you have installed them, FFmpeg, ImageMagick, librsvg, Pandoc, LibreOffice, Calibre, Ghostscript, woff2, Assimp and LibreDWG. None of these are bundled. swift-argument-parser (Apache-2.0) is built into the CLI. Sparkle (MIT) provides signed app updates.")
                     .foregroundStyle(.secondary)
             }
         }

@@ -13,6 +13,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.5.0"),
+        .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.10.1"),
     ],
     targets: [
         // Pure model layer: formats, edges, tools, errors, JSON result schema. Foundation only.
@@ -37,15 +38,17 @@ let package = Package(
         // GUI frontend modules.
         .target(name: "RingoFinderBridge", dependencies: ["RingoDomain"], swiftSettings: v5),
         .target(name: "RingoShortcuts", dependencies: ["RingoSettings"], swiftSettings: v5),
+        .target(name: "RingoUpdates", swiftSettings: v5),
         .target(name: "RingoRadialUI", dependencies: ["RingoEngine"], swiftSettings: v5),
         .executableTarget(
             name: "RingoApp",
-            dependencies: ["RingoEngine", "RingoRadialUI", "RingoFinderBridge", "RingoShortcuts"],
-            swiftSettings: v5
+            dependencies: ["RingoEngine", "RingoRadialUI", "RingoFinderBridge", "RingoShortcuts", "RingoUpdates", .product(name: "Sparkle", package: "Sparkle")],
+            swiftSettings: v5,
+            linkerSettings: [.unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "@executable_path/../Frameworks"])]
         ),
         .testTarget(
             name: "RingoTests",
-            dependencies: ["RingoEngine", "RingoShortcuts", "RingoRadialUI", "RingoFinderBridge"],
+            dependencies: ["RingoEngine", "RingoShortcuts", "RingoRadialUI", "RingoFinderBridge", "RingoUpdates"],
             swiftSettings: v5
         ),
     ]
