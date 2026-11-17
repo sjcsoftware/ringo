@@ -5,6 +5,16 @@
     <description>Ringo releases from sjcsoftware/ringo.</description>
     <language>en</language>
     <item>
+      <title>Ringo 1.3.0</title>
+      <pubDate>Tue, 17 Nov 2026 08:56:20 +0000</pubDate>
+      <sparkle:version>16</sparkle:version>
+      <sparkle:shortVersionString>1.3.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <link>https://github.com/sjcsoftware/ringo/releases/tag/v1.3.0</link>
+      <description>&lt;ul&gt;&lt;li&gt;Added Settings → Providers → Recognition backend with automatic detection and suggestions for locally installed MinerU and Tesseract, including Conda, uv, pipx and user Python environments. Apple Vision remains the default.&lt;/li&gt;&lt;li&gt;Added OCR conversions for PDFs and images to TXT, Markdown, HTML, DOCX, EPUB and XLSX. Backend choices apply immediately to plans, radial menus and conversions; explicit CLI providers override the preference.&lt;/li&gt;&lt;li&gt;MinerU starts only for conversion using its stateless local parser, then exits. Owned worker processes are cleaned up on completion, failure, cancellation, timeout and app exit. MinerU jobs run one at a time to limit memory use; models must be installed separately.&lt;/li&gt;&lt;li&gt;Added regression coverage for backend selection, page ranges, all OCR export formats, HTML tables, discovery, process cleanup and serialized MinerU jobs. Redaction keeps its independent Vision verification.&lt;/li&gt;&lt;/ul&gt;</description>
+      <enclosure url="https://github.com/sjcsoftware/ringo/releases/download/v1.3.0/Ringo-1.3.0-arm64.dmg" type="application/octet-stream" length="6577487" sparkle:edSignature="tcvhIQaUoIDBP1VLLf6FaAGZi+eiBeaBcXg4b4zaWUGmCqgQFa3kX/NMTGZq4pSCzfCGxuHdccUGNPq6KW6xAA==" />
+    </item>
+    <item>
       <title>Ringo 1.2.0</title>
       <pubDate>Tue, 17 Nov 2026 08:27:22 +0000</pubDate>
       <sparkle:version>14</sparkle:version>
