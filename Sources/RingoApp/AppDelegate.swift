@@ -18,12 +18,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     lazy var hud = ProgressHUD(center: jobs)
     lazy var inspectors = InspectorController(service: service, jobs: jobs, settings: { [store] in store.load() })
     let shortcuts = ShortcutService()
+    private let updater = UpdaterManager.shared
     var statusItem: StatusItemController?
     private var lastAnchor = NSPoint.zero
     private var cancellables = Set<AnyCancellable>()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         AppDelegate.shared = self
+        updater.start()
         let s = store.load()
         NSApp.setActivationPolicy(s.general.showDockIcon ? .regular : .accessory)
         applyMenuBarIcon(s.general.showMenuBarIcon)

@@ -2,7 +2,10 @@
 
 ## Local-only policy
 
-- No conversion, tool, discovery or settings operation opens a network connection. There is no telemetry, crash upload, analytics, account, license check or update check.
+- Conversions, tools and provider discovery never open network connections. There is no telemetry, crash upload, analytics, account or license check.
+- Settings → About → Check for Updates explicitly contacts the GitHub API for the latest stable release in `sjcsoftware/ringo`. Update installation uses Sparkle and the repository's HTTPS appcast. Automatic checks, automatic installation and system profiling are disabled by default. File contents are never sent.
+- Sparkle verifies downloaded updates with Ringo's Ed25519 public key before extraction, then installs and relaunches the app. The private signing key stays in the maintainer's macOS Keychain under account `sjcsoftware.ringo` and is never included in the repository or app.
+- Current ad hoc builds use a library-validation exception to load Sparkle without a Developer ID Team ID. Developer ID builds retain library validation. This exception does not bypass Sparkle's archive signature verification.
 - Pandoc always runs with `--sandbox`, so a document cannot make it fetch a remote image or read other local files.
 - FFmpeg inputs and outputs are passed as `file:` URLs; no other protocol is used.
 - ImageMagick paths carry an explicit coder prefix (`PNG:/path`), so a file name can never be interpreted as a URL or a special coder.
@@ -79,4 +82,4 @@ Ringo bundles none of them. FFmpeg builds may be LGPL or GPL and may include pat
 
 ## Reporting
 
-Ringo has no network presence. Report vulnerabilities to the repository owner privately.
+Report vulnerabilities to the repository owner privately.

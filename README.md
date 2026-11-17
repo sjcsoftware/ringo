@@ -58,11 +58,13 @@
 
 Requires **macOS 14 Sonoma or later**. The downloadable build is for **Apple Silicon**.
 
-1. Download `Ringo-1.1.0-arm64.dmg` from [Releases](https://github.com/sjcsoftware/ringo/releases/latest).
+1. Download `Ringo-1.2.0-arm64.dmg` from [Releases](https://github.com/sjcsoftware/ringo/releases/latest).
 2. Open the DMG and drag **Ringo** into **Applications**.
 3. Launch Ringo and complete the short setup.
 
 The current release is ad hoc signed and is **not notarized**. macOS may require you to allow it in **System Settings → Privacy & Security → Open Anyway** after the first launch attempt.
+
+From Ringo 1.2 onward, open **Settings → About → Check for Updates** to fetch the latest GitHub release. If an update is available, click **Update to …**, then follow the installer to download, verify, install and relaunch. Checks run only when requested; conversions and file tools remain local. Older versions need one manual download to get this updater.
 
 ## Getting started
 
@@ -138,7 +140,7 @@ scripts/test.sh
 scripts/offline-test.sh        # conversions with network access denied
 ```
 
-The build uses Swift Package Manager and ad hoc signing; a full Xcode installation is optional. Third-party license notices are included in the app bundle.
+The build uses Swift Package Manager and ad hoc signing; a full Xcode installation is optional. Third-party license notices are included in the app bundle. See [Releasing](docs/RELEASING.md) for signed update packaging.
 
 ## License
 
