@@ -47,6 +47,22 @@
 
 Conversion flags: `--quality 1-100`, `--preset`, `--dpi` (default 300), `--pages 1-3,7`, `--sheet name|n|all`, `--page-size fit|a4|letter`, `--keep-timestamps`, `--fps`, `--max-width`, `--max-duration`, `--audio-bitrate`, `--provider <id>`, `--timeout <s>`, `--strip-metadata`, `--ocr` / `--no-ocr`.
 
+### OCR backends
+
+The app and CLI share `conversion.ocrBackend` (`vision`, `mineru` or `tesseract`). The preference applies immediately to PDF and image text exports: TXT, Markdown, HTML, DOCX, EPUB and XLSX. Select a backend in Settings → Providers, or use:
+
+```sh
+ringo settings set conversion.ocrBackend '"mineru"'
+ringo convert scan.pdf --to txt
+ringo convert scan.png --to docx --provider tesseract
+ringo convert scan.pdf --to md --provider mineru --pages 2-4
+ringo convert report.pdf --to txt --no-ocr
+```
+
+An explicit `--provider` overrides the preference. `--no-ocr` uses PDFKit's text-layer extraction; forcing an OCR provider together with `--no-ocr` is an error. Missing selected backends fail with an installation hint rather than silently switching engines. Apple Vision is built in; Tesseract uses its default English model. Redaction continues to use Vision's text coordinates and independent verification.
+
+Discovery searches executable paths without launching OCR engines, including common Conda, uv, pipx and user Python installations. Custom installations can use `RINGO_MINERU_KIT_PATH`, `RINGO_MINERU_PATH` or `RINGO_TESSERACT_PATH`. MinerU 4 uses stateless local parsing; MinerU 2/3 use the local pipeline CLI. Models must already be installed. Jobs exit and clean up their worker processes on success, failure, cancellation and timeout; no persistent OCR service is started. MinerU jobs are serialized to limit model memory.
+
 ### Inputs
 
 - Several files, folders, `~` paths, Unicode and spaces all work. Quote a glob (`'*.png'`) to let Ringo expand it; unquoted globs are expanded by your shell as usual.

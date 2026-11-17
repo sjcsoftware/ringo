@@ -444,7 +444,9 @@ final class ProvidersState: ObservableObject {
 }
 
 struct ProvidersPane: View {
+    @ObservedObject var model: SettingsModel
     @StateObject private var state = ProvidersState()
+    private let ocrIDs: Set<String> = ["vision", "mineru", "tesseract"]
 
     var body: some View {
         Form {
@@ -456,12 +458,42 @@ struct ProvidersPane: View {
                         Text("Checking providers…").foregroundStyle(.secondary)
                     }
                 }
-                Text("Optional tools are never bundled or downloaded by Ringo. Install them yourself; Ringo finds them in /opt/homebrew/bin, /usr/local/bin or their app bundles.")
+                Text("Optional tools are never bundled or downloaded by Ringo. Ringo also searches user Python, uv, pipx and Conda environments for OCR backends.")
                     .font(.caption).foregroundStyle(.secondary)
                 HStack {
                     Button("Check Again") { Task { await state.refresh() } }
                         .disabled(state.isLoading)
                     if state.isLoading { ProgressView().controlSize(.small) }
+                }
+            }
+            Section("OCR and PDF text") {
+                Picker("Recognition backend", selection: $model.settings.conversion.ocrBackend) {
+                    Text("Apple Vision (built in)").tag("vision")
+                    ForEach(state.statuses.filter { ocrIDs.contains($0.id.rawValue) && $0.id != "vision" }, id: \.id) { backend in
+                        Text(backend.name + (backend.installed ? " — detected" : " — not installed"))
+                            .tag(backend.id.rawValue)
+                            .disabled(!backend.installed)
+                    }
+                }
+                .pickerStyle(.menu)
+                Text("Used for PDF and image conversion to TXT, Markdown, HTML, DOCX, EPUB and XLSX. Apple Vision uses a PDF’s existing text layer when available. Redaction keeps its independent Vision verification.")
+                    .font(.caption).foregroundStyle(.secondary)
+                Text("MinerU loads its local models only when you convert. It exits when the job finishes, fails, times out or is cancelled. No server stays running; MinerU jobs run one at a time to limit memory use. Download MinerU’s models separately before its first conversion.")
+                    .font(.caption).foregroundStyle(.secondary)
+                ForEach(state.statuses.filter { ocrIDs.contains($0.id.rawValue) && $0.id != "vision" && $0.installed }, id: \.id) { backend in
+                    VStack(alignment: .leading, spacing: 3) {
+                        Label("Detected: \(backend.name)", systemImage: "sparkles")
+                        if let path = backend.path { Text(path).font(.caption).foregroundStyle(.secondary).textSelection(.enabled) }
+                        if let suggestion = backend.notes.first { Text(suggestion).font(.caption).foregroundStyle(.secondary) }
+                        if model.settings.conversion.ocrBackend != backend.id.rawValue {
+                            Button("Use \(backend.name)") { model.settings.conversion.ocrBackend = backend.id.rawValue }
+                                .controlSize(.small)
+                        }
+                    }
+                }
+                if state.hasLoaded, let selected = state.statuses.first(where: { $0.id.rawValue == model.settings.conversion.ocrBackend }), !selected.installed {
+                    Label("The selected backend is missing. Install it or choose Apple Vision to convert.", systemImage: "exclamationmark.triangle")
+                        .font(.caption).foregroundStyle(.orange)
                 }
             }
             Section("Providers") {

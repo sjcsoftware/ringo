@@ -1,8 +1,8 @@
 # Format matrix
 
-Generated 2026-10-18 from the capability registry (`ringo capabilities --all --json`). Do not edit by hand; run `python3 scripts/gen-format-matrix.py <path-to-ringo>`.
+Generated 2026-11-17 from the capability registry (`ringo capabilities --all --json`). Do not edit by hand; run `python3 scripts/gen-format-matrix.py <path-to-ringo>`.
 
-**72 formats, 462 directed edges, 620 provider routes.** On the machine that generated this file, 429 edges could run; the rest need an optional provider listed in the row.
+**72 formats, 498 directed edges, 746 provider routes.** On the machine that generated this file, 494 edges could run; the rest need an optional provider listed in the row.
 
 Reading the table: one row per directed edge (source → target). *Provider* is the route Ringo uses first; *Others* are fallbacks. *Fidelity* says what survives (see the legend). *Status* indicates support maturity. *Here* is ✓ when the edge could run on the generating machine. *Tested* is ✓ when the automated suite converts real fixtures along that edge.
 
@@ -48,13 +48,19 @@ A format being readable and another being writable does **not** mean every pair 
 | avif → **tiff** | ImageIO (macOS) | ImageMagick | `lossless` | implemented | ✓ |  |  |
 | avif → **webp** | ImageMagick |  | `lossy` | provider-dependent | ✓ |  | Encoded by libwebp through ImageMagick; quality 85 by default (--quality). Animated GIF frames are kept. |
 | bmp → **avif** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  |  |
+| bmp → **docx** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
+| bmp → **epub** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | bmp → **gif** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  | GIF is limited to 256 colors per frame. |
 | bmp → **heic** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  |  |
+| bmp → **html** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | bmp → **jpeg** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  | JPEG has no transparency; transparent areas are filled with white. |
+| bmp → **md** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | bmp → **pdf** | ImageIO (macOS) |  | `lossless` | implemented | ✓ |  | Each frame or page becomes one PDF page; page size follows the image unless --page-size is set. |
 | bmp → **png** | ImageIO (macOS) | ImageMagick | `lossless` | implemented | ✓ |  |  |
 | bmp → **tiff** | ImageIO (macOS) | ImageMagick | `lossless` | implemented | ✓ |  |  |
+| bmp → **txt** | MinerU | Apple Vision OCR, Tesseract OCR | `text-only` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | bmp → **webp** | ImageMagick |  | `lossy` | provider-dependent | ✓ |  | Encoded by libwebp through ImageMagick; quality 85 by default (--quality). Animated GIF frames are kept. |
+| bmp → **xlsx** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | gif → **avif** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  | Animated sources keep only the first frame unless converted to GIF. |
 | gif → **bmp** | ImageIO (macOS) | ImageMagick | `lossless` | implemented | ✓ |  | BMP stores no EXIF/ICC metadata; orientation is applied to the pixels.; Animated sources keep only the first frame unless converted to GIF. |
 | gif → **heic** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  | Animated sources keep only the first frame unless converted to GIF. |
@@ -68,28 +74,46 @@ A format being readable and another being writable does **not** mean every pair 
 | gif → **webp** | ImageMagick |  | `lossy` | provider-dependent | ✓ |  | Encoded by libwebp through ImageMagick; quality 85 by default (--quality). Animated GIF frames are kept. |
 | heic → **avif** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  |  |
 | heic → **bmp** | ImageIO (macOS) | ImageMagick | `lossless` | implemented | ✓ |  | BMP stores no EXIF/ICC metadata; orientation is applied to the pixels. |
+| heic → **docx** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
+| heic → **epub** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | heic → **gif** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  | GIF is limited to 256 colors per frame. |
+| heic → **html** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | heic → **jpeg** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  | JPEG has no transparency; transparent areas are filled with white. |
+| heic → **md** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | heic → **pdf** | ImageIO (macOS) |  | `lossless` | implemented | ✓ |  | Each frame or page becomes one PDF page; page size follows the image unless --page-size is set. |
 | heic → **png** | ImageIO (macOS) | ImageMagick | `lossless` | implemented | ✓ |  |  |
 | heic → **tiff** | ImageIO (macOS) | ImageMagick | `lossless` | implemented | ✓ |  |  |
+| heic → **txt** | MinerU | Apple Vision OCR, Tesseract OCR | `text-only` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | heic → **webp** | ImageMagick |  | `lossy` | provider-dependent | ✓ |  | Encoded by libwebp through ImageMagick; quality 85 by default (--quality). Animated GIF frames are kept. |
+| heic → **xlsx** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | jpeg → **avif** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  |  |
 | jpeg → **bmp** | ImageIO (macOS) | ImageMagick | `lossless` | implemented | ✓ | ✓ | BMP stores no EXIF/ICC metadata; orientation is applied to the pixels. |
+| jpeg → **docx** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
+| jpeg → **epub** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | jpeg → **gif** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  | GIF is limited to 256 colors per frame. |
 | jpeg → **heic** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ | ✓ |  |
+| jpeg → **html** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
+| jpeg → **md** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | jpeg → **pdf** | ImageIO (macOS) |  | `lossless` | implemented | ✓ |  | Each frame or page becomes one PDF page; page size follows the image unless --page-size is set. |
 | jpeg → **png** | ImageIO (macOS) | ImageMagick | `lossless` | implemented | ✓ |  |  |
 | jpeg → **tiff** | ImageIO (macOS) | ImageMagick | `lossless` | implemented | ✓ |  |  |
+| jpeg → **txt** | MinerU | Apple Vision OCR, Tesseract OCR | `text-only` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | jpeg → **webp** | ImageMagick |  | `lossy` | provider-dependent | ✓ |  | Encoded by libwebp through ImageMagick; quality 85 by default (--quality). Animated GIF frames are kept. |
+| jpeg → **xlsx** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | png → **avif** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ | ✓ | Animated sources keep only the first frame unless converted to GIF. |
 | png → **bmp** | ImageIO (macOS) | ImageMagick | `lossless` | implemented | ✓ | ✓ | BMP stores no EXIF/ICC metadata; orientation is applied to the pixels.; Animated sources keep only the first frame unless converted to GIF. |
+| png → **docx** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
+| png → **epub** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | png → **gif** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ | ✓ | GIF is limited to 256 colors per frame. |
 | png → **heic** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ | ✓ | Animated sources keep only the first frame unless converted to GIF. |
+| png → **html** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | png → **jpeg** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ | ✓ | JPEG has no transparency; transparent areas are filled with white.; Animated sources keep only the first frame unless converted to GIF. |
+| png → **md** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | png → **pdf** | ImageIO (macOS) |  | `lossless` | implemented | ✓ | ✓ | Each frame or page becomes one PDF page; page size follows the image unless --page-size is set. |
 | png → **tiff** | ImageIO (macOS) | ImageMagick | `lossless` | implemented | ✓ | ✓ | Animated sources keep only the first frame unless converted to GIF. |
+| png → **txt** | MinerU | Apple Vision OCR, Tesseract OCR | `text-only` | provider-dependent | ✓ | ✓ | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | png → **webp** | ImageMagick |  | `lossy` | provider-dependent | ✓ | ✓ | Encoded by libwebp through ImageMagick; quality 85 by default (--quality). Animated GIF frames are kept. |
+| png → **xlsx** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | psd → **avif** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  | Uses the flattened composite stored in the PSD; layers are not preserved. |
 | psd → **bmp** | ImageIO (macOS) | ImageMagick | `lossless` | implemented | ✓ |  | BMP stores no EXIF/ICC metadata; orientation is applied to the pixels.; Uses the flattened composite stored in the PSD; layers are not preserved. |
 | psd → **gif** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  | GIF is limited to 256 colors per frame.; Uses the flattened composite stored in the PSD; layers are not preserved. |
@@ -110,20 +134,32 @@ A format being readable and another being writable does **not** mean every pair 
 | svg → **webp** | ImageMagick |  | `rasterized` | provider-dependent | ✓ |  | Encoded by libwebp through ImageMagick; quality 85 by default (--quality). Animated GIF frames are kept.; SVG is rasterized by ImageMagick's renderer. |
 | tiff → **avif** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  |  |
 | tiff → **bmp** | ImageIO (macOS) | ImageMagick | `lossless` | implemented | ✓ |  | BMP stores no EXIF/ICC metadata; orientation is applied to the pixels. |
+| tiff → **docx** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
+| tiff → **epub** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | tiff → **gif** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  | GIF is limited to 256 colors per frame. |
 | tiff → **heic** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  |  |
+| tiff → **html** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | tiff → **jpeg** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  | JPEG has no transparency; transparent areas are filled with white. |
+| tiff → **md** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | tiff → **pdf** | ImageIO (macOS) |  | `lossless` | implemented | ✓ |  | Each frame or page becomes one PDF page; page size follows the image unless --page-size is set. |
 | tiff → **png** | ImageIO (macOS) | ImageMagick | `lossless` | implemented | ✓ |  |  |
+| tiff → **txt** | MinerU | Apple Vision OCR, Tesseract OCR | `text-only` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | tiff → **webp** | ImageMagick |  | `lossy` | provider-dependent | ✓ |  | Encoded by libwebp through ImageMagick; quality 85 by default (--quality). Animated GIF frames are kept. |
+| tiff → **xlsx** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | webp → **avif** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  | Animated sources keep only the first frame unless converted to GIF. |
 | webp → **bmp** | ImageIO (macOS) | ImageMagick | `lossless` | implemented | ✓ |  | BMP stores no EXIF/ICC metadata; orientation is applied to the pixels.; Animated sources keep only the first frame unless converted to GIF. |
+| webp → **docx** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
+| webp → **epub** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | webp → **gif** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  | GIF is limited to 256 colors per frame. |
 | webp → **heic** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  | Animated sources keep only the first frame unless converted to GIF. |
+| webp → **html** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | webp → **jpeg** | ImageIO (macOS) | ImageMagick | `lossy` | implemented | ✓ |  | JPEG has no transparency; transparent areas are filled with white.; Animated sources keep only the first frame unless converted to GIF. |
+| webp → **md** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 | webp → **pdf** | ImageIO (macOS) |  | `lossless` | implemented | ✓ |  | Each frame or page becomes one PDF page; page size follows the image unless --page-size is set. |
 | webp → **png** | ImageIO (macOS) | ImageMagick | `lossless` | implemented | ✓ |  | Animated sources keep only the first frame unless converted to GIF. |
 | webp → **tiff** | ImageIO (macOS) | ImageMagick | `lossless` | implemented | ✓ |  | Animated sources keep only the first frame unless converted to GIF. |
+| webp → **txt** | MinerU | Apple Vision OCR, Tesseract OCR | `text-only` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
+| webp → **xlsx** | MinerU | Apple Vision OCR, Tesseract OCR | `heuristic` | provider-dependent | ✓ |  | Recognized locally with MinerU. Review OCR accuracy; document exports reflow text and omit images. XLSX uses recognized tables, or one text block per row. Image inputs use the first frame. |
 
 ## Audio
 
@@ -304,18 +340,18 @@ A format being readable and another being writable does **not** mean every pair 
 
 | Edge | Provider | Others | Fidelity | Status | Here | Tested | Notes / requirement |
 |---|---|---|---|---|---|---|---|
-| pdf → **docx** | PDFKit (macOS) |  | `heuristic` | implemented | ✓ | ✓ | Text is reflowed into an editable document with inferred headings and lists. Layout, images, columns and tables are NOT reproduced. Scanned PDFs need --ocr. |
-| pdf → **epub** | PDFKit (macOS) | Calibre | `heuristic` | implemented | ✓ | ✓ | Reflowable text only; images and layout are dropped. |
+| pdf → **docx** | PDFKit (macOS) | Apple Vision OCR, MinerU, Tesseract OCR | `heuristic` | implemented | ✓ | ✓ | Text is reflowed into an editable document with inferred headings and lists. Layout, images, columns and tables are NOT reproduced. Scanned PDFs need --ocr. |
+| pdf → **epub** | Calibre | Apple Vision OCR, MinerU, PDFKit (macOS), Tesseract OCR | `heuristic` | provider-dependent | ✓ | ✓ | Converted by Calibre; layout is reflowed for e-readers.; PDF input is heuristic; complex layouts break. |
 | pdf → **heic** | PDFKit (macOS) |  | `rasterized` | implemented | ✓ |  | All pages by default at 300 DPI (adjust with --dpi, select with --pages). Multi-page output files are named <name>-p01, -p02 … |
-| pdf → **html** | PDFKit (macOS) |  | `heuristic` | implemented | ✓ |  | Reflowed text with inferred headings and lists; layout, images and tables are not kept. |
+| pdf → **html** | PDFKit (macOS) | Apple Vision OCR, MinerU, Tesseract OCR | `heuristic` | implemented | ✓ | ✓ | Reflowed text with inferred headings and lists; layout, images and tables are not kept. |
 | pdf → **jpeg** | PDFKit (macOS) |  | `rasterized` | implemented | ✓ | ✓ | All pages by default at 300 DPI (adjust with --dpi, select with --pages). Multi-page output files are named <name>-p01, -p02 …; JPEG compression is lossy. |
-| pdf → **md** | PDFKit (macOS) |  | `heuristic` | implemented | ✓ | ✓ | Paragraphs, headings and lists are reconstructed from line positions and font sizes; tables, columns and images are not. |
+| pdf → **md** | PDFKit (macOS) | Apple Vision OCR, MinerU, Tesseract OCR | `heuristic` | implemented | ✓ | ✓ | Paragraphs, headings and lists are reconstructed from line positions and font sizes; tables, columns and images are not. |
 | pdf → **pages** | Two-step route |  | `heuristic` | provider-dependent | ✗ |  | Requires Apple Pages (free on the Mac App Store). There is no public API for writing Pages files. |
 | pdf → **png** | PDFKit (macOS) |  | `rasterized` | implemented | ✓ | ✓ | All pages by default at 300 DPI (adjust with --dpi, select with --pages). Multi-page output files are named <name>-p01, -p02 … |
 | pdf → **pptx** | PDFKit (macOS) |  | `image-only` | implemented | ✓ | ✓ | Each page becomes one slide containing a picture of the page (200 DPI). Nothing on the slides is editable text. |
 | pdf → **tiff** | PDFKit (macOS) |  | `rasterized` | implemented | ✓ |  | All pages by default at 300 DPI (adjust with --dpi, select with --pages). Multi-page output files are named <name>-p01, -p02 … |
-| pdf → **txt** | PDFKit (macOS) |  | `text-only` | implemented | ✓ | ✓ | Text layer only. Scanned pages need --ocr (local Vision OCR); without a text layer and without OCR the result is empty. |
-| pdf → **xlsx** | PDFKit (macOS) |  | `heuristic` | experimental | ✓ | ✓ | Experimental: cells are guessed from text positions, one sheet per page. Merged cells, formulas and formatting are not recovered; review the result. |
+| pdf → **txt** | PDFKit (macOS) | Apple Vision OCR, MinerU, Tesseract OCR | `text-only` | implemented | ✓ | ✓ | Text layer only. Scanned pages need --ocr (local Vision OCR); without a text layer and without OCR the result is empty. |
+| pdf → **xlsx** | PDFKit (macOS) | Apple Vision OCR, MinerU, Tesseract OCR | `heuristic` | experimental | ✓ | ✓ | Experimental: cells are guessed from text positions, one sheet per page. Merged cells, formulas and formatting are not recovered; review the result. |
 
 ## Documents
 
@@ -335,25 +371,25 @@ A format being readable and another being writable does **not** mean every pair 
 
 | Edge | Provider | Others | Fidelity | Status | Here | Tested | Notes / requirement |
 |---|---|---|---|---|---|---|---|
-| doc → **docx** | macOS text system | LibreOffice | `approximate` | implemented | ✓ |  | Converted through the macOS text system: styles, lists and basic tables survive; complex Word features may not. |
+| doc → **docx** | LibreOffice | macOS text system | `approximate` | provider-dependent | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted. |
 | doc → **epub** | macOS text system |  | `approximate` | implemented | ✓ |  | Single-chapter EPUB 3 with headings, paragraphs, lists and emphasis; images and styling are not included. |
 | doc → **html** | macOS text system |  | `approximate` | implemented | ✓ |  |  |
 | doc → **md** | macOS text system |  | `approximate` | implemented | ✓ |  | Headings are inferred from font size; bold, italic, links and lists are kept. Colors, fonts and tables from rich text are dropped. |
-| doc → **odt** | macOS text system | LibreOffice | `approximate` | implemented | ✓ |  | Converted through the macOS text system: styles, lists and basic tables survive; complex Word features may not. |
-| doc → **pdf** | macOS text system | LibreOffice | `approximate` | implemented | ✓ |  | Paginated by the macOS text system. Word-specific layout (headers, footers, columns, floating images) is not reproduced. |
+| doc → **odt** | LibreOffice | macOS text system | `approximate` | provider-dependent | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted. |
+| doc → **pdf** | LibreOffice | macOS text system | `approximate` | provider-dependent | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted. |
 | doc → **txt** | macOS text system |  | `text-only` | implemented | ✓ |  |  |
 | docx → **epub** | Pandoc | Calibre, macOS text system | `approximate` | provider-dependent | ✓ |  | Run in Pandoc's sandbox: images referenced by path or URL are not embedded (no file or network access). |
 | docx → **html** | macOS text system | Pandoc | `approximate` | implemented | ✓ |  |  |
 | docx → **md** | Pandoc | macOS text system | `approximate` | provider-dependent | ✓ | ✓ | Run in Pandoc's sandbox: images referenced by path or URL are not embedded (no file or network access).; GitHub-flavored Markdown; styling without a Markdown equivalent is dropped. |
-| docx → **odt** | macOS text system | LibreOffice, Pandoc | `approximate` | implemented | ✓ |  | Converted through the macOS text system: styles, lists and basic tables survive; complex Word features may not. |
+| docx → **odt** | LibreOffice | Pandoc, macOS text system | `approximate` | provider-dependent | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted. |
 | docx → **pages** | Apple Pages & Keynote |  | `approximate` | provider-dependent | ✗ |  | Requires Apple Pages (free on the Mac App Store). There is no public API for writing Pages files. |
-| docx → **pdf** | macOS text system | LibreOffice | `approximate` | implemented | ✓ |  | Paginated by the macOS text system. Word-specific layout (headers, footers, columns, floating images) is not reproduced. |
+| docx → **pdf** | LibreOffice | macOS text system | `approximate` | provider-dependent | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted. |
 | docx → **txt** | macOS text system | Pandoc | `text-only` | implemented | ✓ |  |  |
 | epub → **docx** | Pandoc | Calibre, macOS text system | `approximate` | provider-dependent | ✓ |  | Run in Pandoc's sandbox: images referenced by path or URL are not embedded (no file or network access). |
 | epub → **html** | Pandoc | macOS text system | `approximate` | provider-dependent | ✓ |  | Run in Pandoc's sandbox: images referenced by path or URL are not embedded (no file or network access). |
 | epub → **md** | Pandoc | macOS text system | `approximate` | provider-dependent | ✓ |  | Run in Pandoc's sandbox: images referenced by path or URL are not embedded (no file or network access).; GitHub-flavored Markdown; styling without a Markdown equivalent is dropped. |
 | epub → **odt** | Pandoc | macOS text system | `approximate` | provider-dependent | ✓ |  | Run in Pandoc's sandbox: images referenced by path or URL are not embedded (no file or network access). |
-| epub → **pdf** | macOS text system | Calibre | `approximate` | implemented | ✓ |  | Paginated by the macOS text system. Word-specific layout (headers, footers, columns, floating images) is not reproduced.; EPUB images are dropped. |
+| epub → **pdf** | Calibre | macOS text system | `approximate` | provider-dependent | ✓ |  | Converted by Calibre; layout is reflowed for e-readers. |
 | epub → **txt** | Pandoc | macOS text system | `text-only` | provider-dependent | ✓ |  | Run in Pandoc's sandbox: images referenced by path or URL are not embedded (no file or network access). |
 | html → **docx** | macOS text system | Pandoc | `approximate` | implemented | ✓ |  | Converted through the macOS text system: styles, lists and basic tables survive; complex Word features may not. |
 | html → **epub** | Pandoc | macOS text system | `approximate` | provider-dependent | ✓ |  | Run in Pandoc's sandbox: images referenced by path or URL are not embedded (no file or network access). |
@@ -367,25 +403,25 @@ A format being readable and another being writable does **not** mean every pair 
 | md → **odt** | Pandoc | macOS text system | `approximate` | provider-dependent | ✓ |  | Run in Pandoc's sandbox: images referenced by path or URL are not embedded (no file or network access). |
 | md → **pdf** | macOS text system |  | `approximate` | implemented | ✓ | ✓ | Paginated by the macOS text system. Word-specific layout (headers, footers, columns, floating images) is not reproduced.; Markdown is read with Ringo's built-in reader (CommonMark subset). Install Pandoc for full CommonMark/GFM. |
 | md → **txt** | Pandoc | macOS text system | `text-only` | provider-dependent | ✓ |  | Run in Pandoc's sandbox: images referenced by path or URL are not embedded (no file or network access). |
-| odt → **docx** | macOS text system | LibreOffice, Pandoc | `approximate` | implemented | ✓ |  | Converted through the macOS text system: styles, lists and basic tables survive; complex Word features may not. |
+| odt → **docx** | LibreOffice | Pandoc, macOS text system | `approximate` | provider-dependent | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted. |
 | odt → **epub** | Pandoc | macOS text system | `approximate` | provider-dependent | ✓ |  | Run in Pandoc's sandbox: images referenced by path or URL are not embedded (no file or network access). |
 | odt → **html** | macOS text system | Pandoc | `approximate` | implemented | ✓ |  |  |
 | odt → **md** | Pandoc | macOS text system | `approximate` | provider-dependent | ✓ |  | Run in Pandoc's sandbox: images referenced by path or URL are not embedded (no file or network access).; GitHub-flavored Markdown; styling without a Markdown equivalent is dropped. |
-| odt → **pdf** | macOS text system | LibreOffice | `approximate` | implemented | ✓ |  | Paginated by the macOS text system. Word-specific layout (headers, footers, columns, floating images) is not reproduced. |
+| odt → **pdf** | LibreOffice | macOS text system | `approximate` | provider-dependent | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted. |
 | odt → **txt** | macOS text system | Pandoc | `text-only` | implemented | ✓ |  |  |
-| pages → **docx** | Apple Pages & Keynote | LibreOffice | `approximate` | provider-dependent | ✗ |  | Requires Apple Pages (free on the Mac App Store). There is no public API for writing Pages files. |
+| pages → **docx** | LibreOffice | Apple Pages & Keynote | `approximate` | experimental | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted.; Pages import (libetonyek) is partial; Apple Pages gives exact results. |
 | pages → **epub** | Apple Pages & Keynote |  | `approximate` | provider-dependent | ✗ |  | Requires Apple Pages (free on the Mac App Store). There is no public API for writing Pages files. |
-| pages → **html** | Two-step route |  | `approximate` | provider-dependent | ✗ |  | Requires LibreOffice. Install it with `brew install --cask libreoffice` (about 1 GB). |
-| pages → **md** | Two-step route |  | `approximate` | provider-dependent | ✗ |  | Requires LibreOffice. Install it with `brew install --cask libreoffice` (about 1 GB). |
-| pages → **odt** | LibreOffice |  | `approximate` | experimental | ✗ |  | Requires LibreOffice. Install it with `brew install --cask libreoffice` (about 1 GB). |
-| pages → **pdf** | Apple Pages & Keynote | LibreOffice | `lossless` | provider-dependent | ✗ |  | Requires Apple Pages (free on the Mac App Store). There is no public API for writing Pages files. |
+| pages → **html** | Two-step route |  | `approximate` | provider-dependent | ✓ |  | Converted through DOCX. |
+| pages → **md** | Two-step route |  | `approximate` | provider-dependent | ✓ |  | Converted through DOCX. |
+| pages → **odt** | LibreOffice |  | `approximate` | experimental | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted.; Pages import (libetonyek) is partial; Apple Pages gives exact results. |
+| pages → **pdf** | LibreOffice | Apple Pages & Keynote | `approximate` | experimental | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted.; Pages import (libetonyek) is partial; Apple Pages gives exact results. |
 | pages → **txt** | Apple Pages & Keynote |  | `text-only` | provider-dependent | ✗ |  | Requires Apple Pages (free on the Mac App Store). There is no public API for writing Pages files. |
-| rtf → **docx** | macOS text system | LibreOffice, Pandoc | `approximate` | implemented | ✓ | ✓ | Converted through the macOS text system: styles, lists and basic tables survive; complex Word features may not. |
+| rtf → **docx** | LibreOffice | Pandoc, macOS text system | `approximate` | provider-dependent | ✓ | ✓ | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted. |
 | rtf → **epub** | Pandoc | macOS text system | `approximate` | provider-dependent | ✓ |  | Run in Pandoc's sandbox: images referenced by path or URL are not embedded (no file or network access). |
 | rtf → **html** | macOS text system | Pandoc | `approximate` | implemented | ✓ |  |  |
 | rtf → **md** | Pandoc | macOS text system | `approximate` | provider-dependent | ✓ |  | Run in Pandoc's sandbox: images referenced by path or URL are not embedded (no file or network access).; GitHub-flavored Markdown; styling without a Markdown equivalent is dropped. |
-| rtf → **odt** | macOS text system | LibreOffice, Pandoc | `approximate` | implemented | ✓ |  | Converted through the macOS text system: styles, lists and basic tables survive; complex Word features may not. |
-| rtf → **pdf** | macOS text system | LibreOffice | `approximate` | implemented | ✓ |  | Paginated by the macOS text system. Word-specific layout (headers, footers, columns, floating images) is not reproduced. |
+| rtf → **odt** | LibreOffice | Pandoc, macOS text system | `approximate` | provider-dependent | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted. |
+| rtf → **pdf** | LibreOffice | macOS text system | `approximate` | provider-dependent | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted. |
 | rtf → **txt** | macOS text system | Pandoc | `text-only` | implemented | ✓ |  |  |
 | rtfd → **docx** | macOS text system |  | `approximate` | implemented | ✓ |  | Converted through the macOS text system: styles, lists and basic tables survive; complex Word features may not. |
 | rtfd → **epub** | macOS text system |  | `approximate` | implemented | ✓ |  | Single-chapter EPUB 3 with headings, paragraphs, lists and emphasis; images and styling are not included. |
@@ -418,17 +454,17 @@ A format being readable and another being writable does **not** mean every pair 
 
 | Edge | Provider | Others | Fidelity | Status | Here | Tested | Notes / requirement |
 |---|---|---|---|---|---|---|---|
-| key → **jpeg** | Two-step route |  | `image-only` | provider-dependent | ✗ |  | Requires LibreOffice. Install it with `brew install --cask libreoffice` (about 1 GB). |
-| key → **pdf** | Apple Pages & Keynote | LibreOffice | `lossless` | provider-dependent | ✗ |  | Requires Apple Keynote (free on the Mac App Store). |
-| key → **png** | Two-step route |  | `image-only` | provider-dependent | ✗ |  | Requires LibreOffice. Install it with `brew install --cask libreoffice` (about 1 GB). |
-| key → **pptx** | Apple Pages & Keynote | LibreOffice | `approximate` | provider-dependent | ✗ |  | Requires Apple Keynote (free on the Mac App Store). |
-| ppt → **jpeg** | Two-step route |  | `image-only` | provider-dependent | ✗ |  | Requires LibreOffice. Install it with `brew install --cask libreoffice` (about 1 GB). |
-| ppt → **pdf** | Apple Pages & Keynote | LibreOffice | `approximate` | provider-dependent | ✗ |  | Requires Apple Keynote (free on the Mac App Store). |
-| ppt → **png** | Two-step route |  | `image-only` | provider-dependent | ✗ |  | Requires LibreOffice. Install it with `brew install --cask libreoffice` (about 1 GB). |
-| ppt → **pptx** | LibreOffice |  | `approximate` | provider-dependent | ✗ |  | Requires LibreOffice. Install it with `brew install --cask libreoffice` (about 1 GB). |
-| pptx → **jpeg** | Two-step route |  | `image-only` | provider-dependent | ✗ |  | Requires LibreOffice. Install it with `brew install --cask libreoffice` (about 1 GB). |
-| pptx → **pdf** | Apple Pages & Keynote | LibreOffice | `approximate` | provider-dependent | ✗ |  | Requires Apple Keynote (free on the Mac App Store). |
-| pptx → **png** | Two-step route |  | `image-only` | provider-dependent | ✗ |  | Requires LibreOffice. Install it with `brew install --cask libreoffice` (about 1 GB). |
+| key → **jpeg** | Two-step route |  | `image-only` | provider-dependent | ✓ |  | Converted through PDF.; One JPEG per slide at 300 DPI. |
+| key → **pdf** | LibreOffice | Apple Pages & Keynote | `approximate` | experimental | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted.; One page per slide, in slide order. Animations and speaker notes are not exported. |
+| key → **png** | Two-step route |  | `image-only` | provider-dependent | ✓ |  | Converted through PDF.; One PNG per slide at 300 DPI. |
+| key → **pptx** | LibreOffice | Apple Pages & Keynote | `approximate` | experimental | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted. |
+| ppt → **jpeg** | Two-step route |  | `image-only` | provider-dependent | ✓ |  | Converted through PDF.; One JPEG per slide at 300 DPI. |
+| ppt → **pdf** | LibreOffice | Apple Pages & Keynote | `approximate` | provider-dependent | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted.; One page per slide, in slide order. Animations and speaker notes are not exported. |
+| ppt → **png** | Two-step route |  | `image-only` | provider-dependent | ✓ |  | Converted through PDF.; One PNG per slide at 300 DPI. |
+| ppt → **pptx** | LibreOffice |  | `approximate` | provider-dependent | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted. |
+| pptx → **jpeg** | Two-step route |  | `image-only` | provider-dependent | ✓ |  | Converted through PDF.; One JPEG per slide (-p01, -p02 …) at 300 DPI. |
+| pptx → **pdf** | LibreOffice | Apple Pages & Keynote | `approximate` | provider-dependent | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted.; One page per slide, in slide order. Animations and speaker notes are not exported. |
+| pptx → **png** | Two-step route |  | `image-only` | provider-dependent | ✓ |  | Converted through PDF.; One PNG per slide (-p01, -p02 …) at 300 DPI. |
 
 ## Spreadsheets
 
@@ -447,21 +483,21 @@ A format being readable and another being writable does **not** mean every pair 
 | csv → **tsv** | Ringo spreadsheet engine |  | `lossless` | implemented | ✓ |  | UTF-8, RFC 4180 quoting, CRLF line endings. Dates are written as ISO 8601. |
 | csv → **xlsx** | Ringo spreadsheet engine |  | `approximate` | implemented | ✓ | ✓ | Numbers are detected; values with leading zeros stay text. Input encoding is detected (UTF-8, UTF-16, legacy code pages). |
 | ods → **csv** | Ringo spreadsheet engine | LibreOffice | `approximate` | implemented | ✓ | ✓ | Writes the first sheet by default; --sheet <name\|number> picks one, --sheet all writes one file per sheet.; Formulas are exported as their last calculated values; formatting is dropped. |
-| ods → **pdf** | Ringo spreadsheet engine | LibreOffice | `approximate` | implemented | ✓ |  | Rendered by Ringo as a values-only grid on landscape A4 pages, every sheet, wide sheets split across pages. Excel print areas, styles and charts are not reproduced; LibreOffice gives higher fidelity when installed. |
+| ods → **pdf** | LibreOffice | Ringo spreadsheet engine | `approximate` | provider-dependent | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted.; Uses the workbook's print settings; every sheet is printed. |
 | ods → **tsv** | Ringo spreadsheet engine |  | `approximate` | implemented | ✓ |  | Writes the first sheet by default; --sheet <name\|number> picks one, --sheet all writes one file per sheet.; Formulas are exported as their last calculated values; formatting is dropped. |
 | ods → **xlsx** | Ringo spreadsheet engine | LibreOffice | `approximate` | implemented | ✓ |  | Cell values only: formulas become values; styles, merged cells, charts and comments are not carried over. |
 | tsv → **csv** | Ringo spreadsheet engine |  | `lossless` | implemented | ✓ |  | UTF-8, RFC 4180 quoting, CRLF line endings. Dates are written as ISO 8601. |
 | tsv → **ods** | Ringo spreadsheet engine |  | `approximate` | implemented | ✓ |  | Numbers are detected; values with leading zeros stay text. Input encoding is detected (UTF-8, UTF-16, legacy code pages). |
 | tsv → **pdf** | Ringo spreadsheet engine |  | `approximate` | implemented | ✓ |  | Rendered by Ringo as a values-only grid on landscape A4 pages, every sheet, wide sheets split across pages. Excel print areas, styles and charts are not reproduced; LibreOffice gives higher fidelity when installed. |
 | tsv → **xlsx** | Ringo spreadsheet engine |  | `approximate` | implemented | ✓ |  | Numbers are detected; values with leading zeros stay text. Input encoding is detected (UTF-8, UTF-16, legacy code pages). |
-| xls → **csv** | LibreOffice |  | `approximate` | provider-dependent | ✗ |  | Requires LibreOffice. Install it with `brew install --cask libreoffice` (about 1 GB). |
-| xls → **ods** | Two-step route | LibreOffice | `approximate` | provider-dependent | ✗ |  | Requires LibreOffice. Install it with `brew install --cask libreoffice` (about 1 GB). |
-| xls → **pdf** | LibreOffice |  | `approximate` | provider-dependent | ✗ |  | Requires LibreOffice. Install it with `brew install --cask libreoffice` (about 1 GB). |
-| xls → **tsv** | Two-step route |  | `approximate` | provider-dependent | ✗ |  | Requires LibreOffice. Install it with `brew install --cask libreoffice` (about 1 GB). |
-| xls → **xlsx** | LibreOffice |  | `approximate` | provider-dependent | ✗ |  | Requires LibreOffice. Install it with `brew install --cask libreoffice` (about 1 GB). |
+| xls → **csv** | LibreOffice |  | `approximate` | provider-dependent | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted.; CSV contains the first sheet, UTF-8, comma-separated. |
+| xls → **ods** | Two-step route | LibreOffice | `approximate` | provider-dependent | ✓ |  | Converted through XLSX. |
+| xls → **pdf** | LibreOffice |  | `approximate` | provider-dependent | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted.; Uses the workbook's print settings; every sheet is printed. |
+| xls → **tsv** | Two-step route |  | `approximate` | provider-dependent | ✓ |  | Converted through XLSX. |
+| xls → **xlsx** | LibreOffice |  | `approximate` | provider-dependent | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted. |
 | xlsx → **csv** | Ringo spreadsheet engine | LibreOffice | `approximate` | implemented | ✓ | ✓ | Writes the first sheet by default; --sheet <name\|number> picks one, --sheet all writes one file per sheet.; Formulas are exported as their last calculated values; formatting is dropped. |
 | xlsx → **ods** | Ringo spreadsheet engine | LibreOffice | `approximate` | implemented | ✓ | ✓ | Cell values only: formulas become values; styles, merged cells, charts and comments are not carried over. |
-| xlsx → **pdf** | Ringo spreadsheet engine | LibreOffice | `approximate` | implemented | ✓ |  | Rendered by Ringo as a values-only grid on landscape A4 pages, every sheet, wide sheets split across pages. Excel print areas, styles and charts are not reproduced; LibreOffice gives higher fidelity when installed. |
+| xlsx → **pdf** | LibreOffice | Ringo spreadsheet engine | `approximate` | provider-dependent | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted.; Uses the workbook's print settings; every sheet is printed. |
 | xlsx → **tsv** | Ringo spreadsheet engine |  | `approximate` | implemented | ✓ | ✓ | Writes the first sheet by default; --sheet <name\|number> picks one, --sheet all writes one file per sheet.; Formulas are exported as their last calculated values; formatting is dropped. |
 
 ## Subtitles
@@ -598,24 +634,24 @@ Additional 3D, font, Hangul, and CAD routes. Some require optional providers or 
 | Edge | Provider | Others | Fidelity | Status | Here | Tested | Notes / requirement |
 |---|---|---|---|---|---|---|---|
 | otf → **woff** | Ringo WOFF engine |  | `lossless` | implemented | ✓ |  | Tables are zlib-compressed; glyphs are unchanged. |
-| otf → **woff2** | woff2 tools |  | `lossless` | provider-dependent | ✗ |  | Requires the woff2 tools. Install them with `brew install woff2`. |
+| otf → **woff2** | woff2 tools |  | `lossless` | provider-dependent | ✓ |  | Glyph data is losslessly transformed and Brotli-compressed. |
 | ttf → **woff** | Ringo WOFF engine |  | `lossless` | implemented | ✓ | ✓ | Tables are zlib-compressed; glyphs are unchanged. |
-| ttf → **woff2** | woff2 tools |  | `lossless` | provider-dependent | ✗ |  | Requires the woff2 tools. Install them with `brew install woff2`. |
+| ttf → **woff2** | woff2 tools |  | `lossless` | provider-dependent | ✓ |  | Glyph data is losslessly transformed and Brotli-compressed. |
 | woff → **otf** | Ringo WOFF engine |  | `lossless` | implemented | ✓ |  | Fails if the WOFF wraps TrueType outlines (convert to TTF instead). |
 | woff → **ttf** | Ringo WOFF engine |  | `lossless` | implemented | ✓ | ✓ | Fails if the WOFF wraps CFF outlines (convert to OTF instead). |
-| woff2 → **otf** | woff2 tools |  | `lossless` | provider-dependent | ✗ |  | Requires the woff2 tools. Install them with `brew install woff2`. |
-| woff2 → **ttf** | woff2 tools |  | `lossless` | provider-dependent | ✗ |  | Requires the woff2 tools. Install them with `brew install woff2`. |
+| woff2 → **otf** | woff2 tools |  | `lossless` | provider-dependent | ✓ |  | Only for CFF-flavored fonts. |
+| woff2 → **ttf** | woff2 tools |  | `lossless` | provider-dependent | ✓ |  | Fails for CFF-flavored fonts (convert to OTF). |
 
 ### Hangul
 
 | Edge | Provider | Others | Fidelity | Status | Here | Tested | Notes / requirement |
 |---|---|---|---|---|---|---|---|
-| hwp → **docx** | Ringo Hangul reader | LibreOffice | `approximate` | experimental | ✓ |  | Text and paragraph breaks only: tables are flattened into text; images, styles and page layout are dropped. No Hancom Office needed.; Binary HWP 5.0 only; password- or distribution-protected documents are refused. |
+| hwp → **docx** | LibreOffice | Ringo Hangul reader | `approximate` | experimental | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted.; LibreOffice's HWP filter supports the binary HWP 5 format with limited layout fidelity. |
 | hwp → **epub** | Ringo Hangul reader |  | `approximate` | experimental | ✓ |  | Text and paragraph breaks only: tables are flattened into text; images, styles and page layout are dropped. No Hancom Office needed.; Binary HWP 5.0 only; password- or distribution-protected documents are refused. |
 | hwp → **html** | Ringo Hangul reader |  | `approximate` | experimental | ✓ |  | Text and paragraph breaks only: tables are flattened into text; images, styles and page layout are dropped. No Hancom Office needed.; Binary HWP 5.0 only; password- or distribution-protected documents are refused. |
 | hwp → **md** | Two-step route | Ringo Hangul reader | `approximate` | experimental | ✓ |  | Converted through DOCX. |
-| hwp → **odt** | LibreOffice |  | `approximate` | experimental | ✗ |  | Requires LibreOffice. Install it with `brew install --cask libreoffice` (about 1 GB). |
-| hwp → **pdf** | Ringo Hangul reader | LibreOffice | `approximate` | experimental | ✓ |  | Text and paragraph breaks only: tables are flattened into text; images, styles and page layout are dropped. No Hancom Office needed.; Binary HWP 5.0 only; password- or distribution-protected documents are refused. |
+| hwp → **odt** | LibreOffice |  | `approximate` | experimental | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted.; LibreOffice's HWP filter supports the binary HWP 5 format with limited layout fidelity. |
+| hwp → **pdf** | LibreOffice | Ringo Hangul reader | `approximate` | experimental | ✓ |  | Rendered by LibreOffice; layout is close to Office but fonts missing on this Mac are substituted.; LibreOffice's HWP filter supports the binary HWP 5 format with limited layout fidelity. |
 | hwp → **txt** | Two-step route | Ringo Hangul reader | `text-only` | experimental | ✓ |  | Converted through DOCX. |
 | hwpx → **docx** | Ringo Hangul reader |  | `approximate` | implemented | ✓ |  | Text and paragraph breaks only: tables are flattened into text; images, styles and page layout are dropped. No Hancom Office needed. |
 | hwpx → **epub** | Ringo Hangul reader |  | `approximate` | implemented | ✓ |  | Text and paragraph breaks only: tables are flattened into text; images, styles and page layout are dropped. No Hancom Office needed. |
@@ -628,9 +664,9 @@ Additional 3D, font, Hangul, and CAD routes. Some require optional providers or 
 
 | Edge | Provider | Others | Fidelity | Status | Here | Tested | Notes / requirement |
 |---|---|---|---|---|---|---|---|
-| dwg → **dxf** | LibreDWG |  | `approximate` | experimental | ✗ |  | Requires LibreDWG. Install it with `brew install libredwg`. |
-| dwg → **pdf** | Two-step route |  | `approximate` | experimental | ✗ |  | Requires LibreDWG. Install it with `brew install libredwg`. |
-| dxf → **pdf** | LibreOffice |  | `approximate` | experimental | ✗ |  | Requires LibreOffice. Install it with `brew install --cask libreoffice` (about 1 GB). |
+| dwg → **dxf** | LibreDWG |  | `approximate` | experimental | ✓ |  | LibreDWG supports most DWG versions up to R2018; proxy objects may be lost. |
+| dwg → **pdf** | Two-step route |  | `approximate` | experimental | ✓ |  | Converted through DXF. |
+| dxf → **pdf** | LibreOffice |  | `approximate` | experimental | ✓ |  | Drawn by LibreOffice Draw; complex CAD entities may be missing. |
 
 ## Folders and packaging
 

@@ -18,10 +18,19 @@ public struct ProcessOutput: Sendable {
 public enum Subprocess {
     /// Upper bound on captured output per stream.
     static let captureLimit = 8 * 1024 * 1024
+    private static let managedLock = NSLock()
+    private static var managed: [UUID: Process] = [:]
+
+    /// Stop only workers owned by Ringo, never a user's independently running OCR service.
+    public static func terminateManagedProcesses() {
+        managedLock.lock(); let processes = Array(managed.values); managedLock.unlock()
+        for process in processes where process.isRunning { kill(-process.processIdentifier, SIGKILL) }
+    }
 
     public static func run(_ executable: URL, _ arguments: [String], cwd: URL? = nil, timeout: TimeInterval? = nil,
                            environment: [String: String]? = nil, stdin: Data? = nil,
-                           onStdoutLine: (@Sendable (String) -> Void)? = nil) async throws -> ProcessOutput {
+                           onStdoutLine: (@Sendable (String) -> Void)? = nil,
+                           manageProcessGroup: Bool = false) async throws -> ProcessOutput {
         let process = Process()
         process.executableURL = executable
         process.arguments = arguments
@@ -39,9 +48,16 @@ public enum Subprocess {
 
         let timedOut = AtomicFlag()
         let cancelled = AtomicFlag()
+        let token = UUID()
         return try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { (cont: CheckedContinuation<ProcessOutput, Error>) in
                 process.terminationHandler = { p in
+                    if manageProcessGroup {
+                        // Foundation Process creates a new process group on macOS. Kill remaining
+                        // descendants before draining pipes: workers may still have them open.
+                        kill(-p.processIdentifier, SIGKILL)
+                        managedLock.lock(); managed.removeValue(forKey: token); managedLock.unlock()
+                    }
                     outPipe.fileHandleForReading.readabilityHandler = nil
                     errPipe.fileHandleForReading.readabilityHandler = nil
                     box.appendOut(outPipe.fileHandleForReading.readDataToEndOfFile())
@@ -56,12 +72,18 @@ public enum Subprocess {
                     }
                 }
                 do {
+                    if manageProcessGroup {
+                        managedLock.lock(); managed[token] = process; managedLock.unlock()
+                    }
                     try process.run()
                 } catch {
+                    managedLock.lock(); managed.removeValue(forKey: token); managedLock.unlock()
+                    outPipe.fileHandleForReading.readabilityHandler = nil
+                    errPipe.fileHandleForReading.readabilityHandler = nil
                     cont.resume(throwing: RingoError.providerFailed(provider: executable.lastPathComponent, message: error.localizedDescription))
                     return
                 }
-                if cancelled.value { terminate(process) }
+                if cancelled.value { terminate(process, processGroup: manageProcessGroup) }
                 if let stdin {
                     inPipe.fileHandleForWriting.write(stdin)
                     try? inPipe.fileHandleForWriting.close()
@@ -70,22 +92,25 @@ public enum Subprocess {
                     DispatchQueue.global().asyncAfter(deadline: .now() + timeout) {
                         guard process.isRunning else { return }
                         timedOut.set()
-                        terminate(process)
+                        terminate(process, processGroup: manageProcessGroup)
                     }
                 }
             }
         } onCancel: {
             cancelled.set()
-            terminate(process)
+            terminate(process, processGroup: manageProcessGroup)
         }
     }
 
-    static func terminate(_ process: Process) {
+    static func terminate(_ process: Process, processGroup: Bool = false) {
         guard process.isRunning else { return }
-        process.terminate()
         let pid = process.processIdentifier
+        if processGroup { kill(-pid, SIGTERM) }
+        else { process.terminate() }
         DispatchQueue.global().asyncAfter(deadline: .now() + 3) {
-            if process.isRunning { kill(pid, SIGKILL) }
+            if process.isRunning {
+                kill(processGroup ? -pid : pid, SIGKILL)
+            }
         }
     }
 
@@ -106,8 +131,10 @@ public enum Subprocess {
     @discardableResult
     public static func checked(_ provider: String, _ executable: URL, _ arguments: [String], cwd: URL? = nil,
                                timeout: TimeInterval? = nil, environment: [String: String]? = nil,
-                               onStdoutLine: (@Sendable (String) -> Void)? = nil) async throws -> ProcessOutput {
-        let r = try await run(executable, arguments, cwd: cwd, timeout: timeout, environment: environment, onStdoutLine: onStdoutLine)
+                               onStdoutLine: (@Sendable (String) -> Void)? = nil,
+                               manageProcessGroup: Bool = false) async throws -> ProcessOutput {
+        let r = try await run(executable, arguments, cwd: cwd, timeout: timeout, environment: environment, onStdoutLine: onStdoutLine,
+                              manageProcessGroup: manageProcessGroup)
         guard r.status == 0 else {
             throw RingoError.providerFailed(provider: provider, message: r.stderrTail.isEmpty ? "exit status \(r.status)" : r.stderrTail)
         }

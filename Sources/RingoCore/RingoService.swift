@@ -53,6 +53,14 @@ public final class RingoService: @unchecked Sendable {
 
     // MARK: - Planning
 
+    private func conversionCapability(from: FormatID, to: FormatID, options: ConversionOptions) -> Capability? {
+        var provider = options.provider
+        if provider == nil, options.ocr == false, OCRFormats.supports(from, to) {
+            provider = "native.pdf"
+        }
+        return registry.best(from: from, to: to, provider: provider)
+    }
+
     public func plan(_ input: InputFile, to target: FormatID, options: ConversionOptions = .init(), policy: OutputPolicy = .init()) -> PlanEntry {
         var entry = PlanEntry(input: input.originalPath, from: input.format, to: target, possible: false, provider: nil, providerName: nil,
                               fidelity: nil, lossy: nil, status: nil, limitations: [], reason: nil, plannedOutputs: [], warnings: [])
@@ -71,7 +79,7 @@ public final class RingoService: @unchecked Sendable {
             entry.reason = "The file is already \(target.rawValue.uppercased())"
             return entry
         }
-        guard let cap = registry.best(from: from, to: target, provider: options.provider) else {
+        guard let cap = conversionCapability(from: from, to: target, options: options) else {
             entry.reason = options.provider != nil ? "Provider \(options.provider!) cannot convert \(from) to \(target)"
                 : "No provider converts \(from.rawValue.uppercased()) to \(target.rawValue.uppercased())"
             return entry
@@ -143,7 +151,7 @@ public final class RingoService: @unchecked Sendable {
         if input.isCloudPlaceholder {
             return .failure(input: input.originalPath, operation: op, target: target, error: RingoError.cloudPlaceholder(input.originalPath))
         }
-        guard let cap = registry.best(from: from, to: target, provider: options.provider) else {
+        guard let cap = conversionCapability(from: from, to: target, options: options) else {
             let notApplicable = FileResult(input: input.originalPath, status: .notApplicable, operation: op, target: target,
                                            warnings: entry.warnings,
                                            error: ErrorPayload(RingoError.unsupportedConversion(from: from.rawValue, to: target.rawValue,

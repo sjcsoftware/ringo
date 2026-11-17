@@ -9,9 +9,11 @@ public final class CapabilityRegistry: @unchecked Sendable {
     private let userPreferred: Set<ProviderID>
     private let lock = NSLock()
     private var cachedAll: [Capability]?
+    private let ocrBackend: (@Sendable () -> String)?
 
     /// - Parameter providerOrder: user priority; providers not listed keep their default order after these.
-    public init(providers: [ConversionProvider], providerOrder: [String] = []) {
+    public init(providers: [ConversionProvider], providerOrder: [String] = [], ocrBackend: (@Sendable () -> String)? = nil) {
+        self.ocrBackend = ocrBackend
         let preferred = providerOrder.map { ProviderID(rawValue: $0) }
         self.providers = providers.sorted { a, b in
             let ia = preferred.firstIndex(of: a.id) ?? Int.max, ib = preferred.firstIndex(of: b.id) ?? Int.max
@@ -58,7 +60,8 @@ public final class CapabilityRegistry: @unchecked Sendable {
     /// Best capability for one directed edge: the first available provider in priority order, or the
     /// highest-priority unavailable one (with all reasons merged) so the UI can explain what is missing.
     public func best(from: FormatID, to: FormatID, provider forced: ProviderID? = nil) -> Capability? {
-        let candidates = allCapabilities().filter { $0.from == from && $0.to == to && (forced == nil || $0.provider == forced) }
+        let selected = forced ?? preferredOCRProvider(from: from, to: to)
+        let candidates = allCapabilities().filter { $0.from == from && $0.to == to && (selected == nil || $0.provider == selected) }
         guard !candidates.isEmpty else { return nil }
         let ranked = candidates.sorted { rank($0) < rank($1) }
         if let ok = ranked.first(where: { $0.available }) { return ok }
@@ -66,6 +69,13 @@ public final class CapabilityRegistry: @unchecked Sendable {
         let reasons = Array(NSOrderedSet(array: ranked.compactMap(\.unavailableReason))) as! [String]
         first.unavailableReason = reasons.joined(separator: " Alternatively: ")
         return first
+    }
+
+    /// Read the preference at use time so Settings, radial menus, chains and jobs agree immediately.
+    public func preferredOCRProvider(from: FormatID, to: FormatID) -> ProviderID? {
+        guard OCRFormats.supports(from, to), let selected = ocrBackend?() else { return nil }
+        if selected == "vision", from == "pdf" { return nil }
+        return ProviderID(rawValue: selected)
     }
 
     private func rank(_ c: Capability) -> Int {

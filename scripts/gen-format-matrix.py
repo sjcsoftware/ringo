@@ -16,7 +16,7 @@ providers = {p["id"]: p for p in run("providers")}
 fmt = {f["id"]: f for f in formats}
 
 TESTED = set("""png>jpeg png>heic png>tiff png>avif png>bmp png>gif png>pdf png>webp jpeg>bmp jpeg>heic svg>png gif>png
-pdf>png pdf>jpeg pdf>txt pdf>md pdf>docx pdf>epub pdf>pptx pdf>xlsx md>docx md>html md>pdf md>epub docx>md rtf>docx rtfd>txt
+pdf>png pdf>jpeg pdf>txt pdf>md pdf>html pdf>docx pdf>epub pdf>pptx pdf>xlsx png>txt md>docx md>html md>pdf md>epub docx>md rtf>docx rtfd>txt
 textclipping>md hwpx>txt csv>xlsx xlsx>ods ods>csv xlsx>csv xlsx>tsv csv>pdf srt>vtt vtt>srt srt>txt ttf>woff woff>ttf obj>stl
 gzip>folder zip>tgz tgz>folder zip>folder tar>folder wav>m4a wav>aiff wav>mp3 wav>flac wav>ogg wav>opus wav>wma mp4>mp3 mp4>mkv
 mp4>gif""".split())

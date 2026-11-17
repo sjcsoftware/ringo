@@ -33,8 +33,15 @@ public final class ChainProvider: ConversionProvider, @unchecked Sendable {
         ProviderStatus(id: id, name: name, kind: .native, installed: true, notes: ["Combines two direct conversions through an intermediate format."])
     }
 
-    func step(_ from: FormatID, _ to: FormatID) -> (ConversionProvider, EdgeSpec, (Bool, String?))? {
+    func step(_ from: FormatID, _ to: FormatID, ocr: Bool? = nil) -> (ConversionProvider, EdgeSpec, (Bool, String?))? {
         guard let registry else { return nil }
+        let selected: ProviderID? = ocr == false && from == "pdf" && OCRFormats.outputs.contains(to)
+            ? "native.pdf" : registry.preferredOCRProvider(from: from, to: to)
+        if let selected {
+            guard let provider = registry.provider(selected),
+                  let edge = provider.edges.first(where: { $0.from == from && $0.to == to }) else { return nil }
+            return (provider, edge, provider.availability(of: edge))
+        }
         var fallback: (ConversionProvider, EdgeSpec, (Bool, String?))?
         for p in registry.providers where p.id != id {
             guard let e = p.edges.first(where: { $0.from == from && $0.to == to }) else { continue }
@@ -56,7 +63,8 @@ public final class ChainProvider: ConversionProvider, @unchecked Sendable {
 
     public func convert(_ request: ConversionRequest, context: JobContext) async throws -> ProviderOutcome {
         guard let via = request.edge.requirement.map(FormatID.init(rawValue:)),
-              let a = step(request.from, via), a.2.0, let b = step(via, request.to), b.2.0 else {
+              let a = step(request.from, via, ocr: request.options.ocr), a.2.0,
+              let b = step(via, request.to, ocr: request.options.ocr), b.2.0 else {
             throw RingoError.providerMissing(provider: name, hint: availability(of: request.edge).reason ?? "")
         }
         let midDir = context.scratch("chain-\(UUID().uuidString)")
@@ -65,7 +73,7 @@ public final class ChainProvider: ConversionProvider, @unchecked Sendable {
         firstCtx.workDir = midDir
         firstCtx.progress = { f in context.progress(f * 0.5) }
         var opts1 = request.options
-        opts1.pages = nil
+        opts1.pages = request.from == "pdf" ? request.options.pages : nil
         let r1 = try await a.0.convert(ConversionRequest(input: request.input, from: request.from, to: via, edge: a.1, options: opts1), context: firstCtx)
         guard r1.files.count == 1, let mid = r1.files.first else {
             throw RingoError.providerFailed(provider: a.0.name, message: "intermediate step produced \(r1.files.count) files")

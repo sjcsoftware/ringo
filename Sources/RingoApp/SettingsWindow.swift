@@ -145,7 +145,7 @@ struct SettingsRootView: View {
         case .appearance: AppearancePane(model: model)
         case .conversion: ConversionPane(model: model)
         case .tools: ToolsPane(model: model)
-        case .providers: ProvidersPane()
+        case .providers: ProvidersPane(model: model)
         case .advanced: AdvancedPane(model: model)
         case .about: AboutPane()
         }

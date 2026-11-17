@@ -12,6 +12,7 @@
 - LibreOffice runs with a throwaway profile inside the job directory.
 - `scripts/offline-test.sh` runs conversions and tools inside a sandbox profile that denies all network access and checks that the sandbox really blocks `curl`.
 - Ringo does not download optional tools. Settings → Providers shows install commands for the user to run.
+- OCR discovery only checks executable files; it never starts MinerU, Tesseract or their models. MinerU runs in stateless local mode with local model source, offline Hugging Face settings, remote VLM configuration cleared and LLM-aided remote features disabled. Install models separately before use. Ringo stops its owned worker process groups after jobs and on app exit; it never stops independently running user services. Redaction retains its independent Vision verification.
 - iCloud placeholders are refused. Ringo does not trigger downloads, and does not present a file as processed offline when its content is not on the Mac.
 
 ## Permissions

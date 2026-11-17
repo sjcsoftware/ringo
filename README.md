@@ -58,7 +58,7 @@
 
 Requires **macOS 14 Sonoma or later**. The downloadable build is for **Apple Silicon**.
 
-1. Download `Ringo-1.2.0-arm64.dmg` from [Releases](https://github.com/sjcsoftware/ringo/releases/latest).
+1. Download `Ringo-1.3.0-arm64.dmg` from [Releases](https://github.com/sjcsoftware/ringo/releases/latest).
 2. Open the DMG and drag **Ringo** into **Applications**.
 3. Launch Ringo and complete the short setup.
 
@@ -101,8 +101,14 @@ Ringo supports images, audio, video, PDFs, documents, spreadsheets, subtitles, a
 | Pandoc | Additional document conversions | `brew install pandoc` |
 | LibreOffice | Legacy Office input and Office-to-PDF conversion | `brew install --cask libreoffice` |
 | Apple Pages / Keynote | Pages and Keynote conversions | Mac App Store |
+| MinerU | OCR and document recognition, including tables and equations | [Install MinerU](https://opendatalab.github.io/MinerU/) and download local models |
+| Tesseract | Lightweight OCR to text and document formats | `brew install tesseract` |
 
 Run `ringo providers doctor` to see available providers and what additional tools would unlock. Ringo never downloads providers automatically.
+
+Choose **Settings → Providers → Recognition backend** to use Apple Vision, MinerU or Tesseract for PDF and image exports to TXT, Markdown, HTML, DOCX, EPUB and XLSX. Ringo detects supported OCR executables in Homebrew, user Python, Conda, uv and pipx environments and suggests installed options. **Check Again** finds tools installed while Ringo is open.
+
+MinerU runs only when a conversion starts and exits afterward, including on failure, cancellation or timeout. Ringo uses MinerU 4's stateless `mineru-kit parse` command (or the local pipeline CLI for MinerU 2/3), so no document-library server stays running. MinerU jobs run one at a time to limit memory use. Install its local models separately first; Ringo does not download models or use remote parsing. Reflowed OCR exports omit images; XLSX uses recognized tables or one text block per row. Apple Vision remains the default, and redaction keeps its separate Vision verification.
 
 ## Command line
 

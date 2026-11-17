@@ -93,6 +93,8 @@ public struct RingoSettings: Codable, Equatable, Sendable {
         public init() {}
         /// Provider priority. Providers not listed keep their built-in order after these.
         public var providerOrder: [String] = []
+        /// `vision`, `mineru`, or `tesseract`. Applies to PDF text exports and image OCR.
+        public var ocrBackend = "vision"
         public var defaultQuality = 85
         public var pdfRasterDPI = 300
         public var maxConcurrentJobs = 2

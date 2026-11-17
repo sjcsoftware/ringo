@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.0
+
+- Added Settings → Providers → Recognition backend with automatic detection and suggestions for locally installed MinerU and Tesseract, including Conda, uv, pipx and user Python environments. Apple Vision remains the default.
+- Added OCR conversions for PDFs and images to TXT, Markdown, HTML, DOCX, EPUB and XLSX. Backend choices apply immediately to plans, radial menus and conversions; explicit CLI providers override the preference.
+- MinerU starts only for conversion using its stateless local parser, then exits. Owned worker processes are cleaned up on completion, failure, cancellation, timeout and app exit. MinerU jobs run one at a time to limit memory use; models must be installed separately.
+- Added regression coverage for backend selection, page ranges, all OCR export formats, HTML tables, discovery, process cleanup and serialized MinerU jobs. Redaction keeps its independent Vision verification.
+
 ## 1.2.0
 
 - Fixed the Settings → Providers crash by moving tool probes out of SwiftUI view construction and off the main thread. Discovery now shows loading progress and keeps Settings responsive.

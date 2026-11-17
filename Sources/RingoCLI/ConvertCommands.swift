@@ -45,7 +45,7 @@ struct ConversionFlags: ParsableArguments {
     @Flag(name: .long, help: "Remove metadata from the output where the format allows.")
     var stripMetadata = false
 
-    @Flag(inversion: .prefixedNo, help: "OCR scanned PDF pages with the local Vision framework (default: only when the PDF has no text).")
+    @Flag(inversion: .prefixedNo, help: "Recognize text with the OCR backend chosen in settings. --no-ocr uses only the PDF text layer.")
     var ocr: Bool?
 
     var options: ConversionOptions {

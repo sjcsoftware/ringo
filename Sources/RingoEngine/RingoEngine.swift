@@ -8,7 +8,7 @@ import RingoNative
 
 /// Composition root shared by the CLI and the app: both get the same registry and engine.
 public enum RingoEngine {
-    public static let version = "1.2.0"
+    public static let version = "1.3.0"
 
     /// Explicit two-step routes. Every chain is listed in docs/FORMATS.md.
     public static let chains: [ChainProvider.Chain] = [
@@ -32,6 +32,8 @@ public enum RingoEngine {
         [
             NativeImageProvider(), NativePDFProvider(), NativeDocumentProvider(), NativeSpreadsheetProvider(), NativeSubtitleProvider(),
             NativeMediaProvider(), NativeModelProvider(), NativeFontProvider(), NativeHangulProvider(),
+            OCRDocumentProvider(backend: VisionDocumentOCR()), OCRDocumentProvider(backend: MinerUDocumentOCR()),
+            OCRDocumentProvider(backend: TesseractDocumentOCR()),
             RsvgProvider(), LibreOfficeProvider(), AppleIWorkProvider(), PandocProvider(), FFmpegProvider(), ImageMagickProvider(),
             CalibreProvider(), ArchiveProvider(), WOFF2Provider(), AssimpProvider(), LibreDWGProvider(),
         ]
@@ -39,7 +41,8 @@ public enum RingoEngine {
 
     public static func makeService(settingsStore: SettingsStore = .shared) -> RingoService {
         let chain = ChainProvider(chains: chains)
-        let registry = CapabilityRegistry(providers: makeProviders() + [chain], providerOrder: settingsStore.load().conversion.providerOrder)
+        let registry = CapabilityRegistry(providers: makeProviders() + [chain], providerOrder: settingsStore.load().conversion.providerOrder,
+                                          ocrBackend: { settingsStore.load().conversion.ocrBackend })
         chain.registry = registry
         return RingoService(registry: registry, tools: [Toolbox()], settingsStore: settingsStore)
     }

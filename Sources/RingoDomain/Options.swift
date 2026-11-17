@@ -28,7 +28,7 @@ public struct ConversionOptions: Codable, Hashable, Sendable {
     public var timeout: Double?
     /// `preserve` (default) or `strip`.
     public var metadata: String?
-    /// Run OCR on scanned PDFs when extracting text (local Vision framework).
+    /// Run OCR with the selected local backend when extracting text.
     public var ocr: Bool?
 
     public init(quality: Int? = nil, preset: String? = nil, dpi: Int? = nil, pages: String? = nil, sheet: String? = nil,

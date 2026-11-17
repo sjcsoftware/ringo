@@ -23,6 +23,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var lastAnchor = NSPoint.zero
     private var cancellables = Set<AnyCancellable>()
 
+    func applicationWillTerminate(_ notification: Notification) {
+        Subprocess.terminateManagedProcesses()
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         AppDelegate.shared = self
         updater.start()
