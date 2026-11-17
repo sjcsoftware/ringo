@@ -418,21 +418,27 @@ final class ProvidersState: ObservableObject {
     @Published var statuses: [ProviderStatus] = []
     @Published var available = 0
     @Published var missing = 0
+    @Published private(set) var isLoading = false
+    @Published private(set) var hasLoaded = false
 
-    init() { refresh() }
-
-    func refresh() {
+    func refresh() async {
+        guard !isLoading else { return }
+        isLoading = true
+        defer { isLoading = false }
         let reg = AppDelegate.shared.service.registry
-        reg.invalidate()
-        statuses = reg.providerStatuses()
-        let pairs = Set(reg.allCapabilities().map { "\($0.from.rawValue)>\($0.to.rawValue)" })
-        var ok = 0, no = 0
-        for p in pairs {
-            let parts = p.split(separator: ">").map(String.init)
-            if reg.best(from: FormatID(parts[0]), to: FormatID(parts[1]))?.available == true { ok += 1 } else { no += 1 }
-        }
-        available = ok
-        missing = no
+        // Process.waitUntilExit can run the current run loop. Never probe tools during
+        // SwiftUI view construction or on the main thread: it can re-enter layout.
+        let result = await Task.detached(priority: .userInitiated) {
+            reg.invalidate()
+            let statuses = reg.providerStatuses()
+            let capabilities = reg.allCapabilities()
+            let pairs = Set(capabilities.map { "\($0.from.rawValue)>\($0.to.rawValue)" })
+            let available = Set(capabilities.filter(\.available).map { "\($0.from.rawValue)>\($0.to.rawValue)" }).count
+            return (statuses, available, pairs.count - available)
+        }.value
+        guard !Task.isCancelled else { return }
+        (statuses, available, missing) = result
+        hasLoaded = true
     }
 }
 
@@ -442,10 +448,20 @@ struct ProvidersPane: View {
     var body: some View {
         Form {
             Section {
-                LabeledContent("Conversion routes") { Text("\(state.available) available, \(state.missing) need an optional tool").foregroundStyle(.secondary) }
+                LabeledContent("Conversion routes") {
+                    if state.hasLoaded {
+                        Text("\(state.available) available, \(state.missing) need an optional tool").foregroundStyle(.secondary)
+                    } else {
+                        Text("Checking providers…").foregroundStyle(.secondary)
+                    }
+                }
                 Text("Optional tools are never bundled or downloaded by Ringo. Install them yourself; Ringo finds them in /opt/homebrew/bin, /usr/local/bin or their app bundles.")
                     .font(.caption).foregroundStyle(.secondary)
-                Button("Check Again") { state.refresh() }
+                HStack {
+                    Button("Check Again") { Task { await state.refresh() } }
+                        .disabled(state.isLoading)
+                    if state.isLoading { ProgressView().controlSize(.small) }
+                }
             }
             Section("Providers") {
                 ForEach(state.statuses, id: \.id) { s in
@@ -470,6 +486,7 @@ struct ProvidersPane: View {
             }
         }
         .settingsPane()
+        .task { await state.refresh() }
     }
 }
 
